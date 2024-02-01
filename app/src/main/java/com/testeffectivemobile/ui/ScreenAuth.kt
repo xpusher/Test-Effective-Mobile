@@ -28,12 +28,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.testeffectivemobile.R
 import com.testeffectivemobile.ui.theme.TestEffectiveMobileTheme
@@ -43,7 +41,7 @@ import kotlinx.coroutines.launch
 @ExperimentalMaterial3Api
 @Composable
 fun ScreenAuth(
-    navController: NavHostController,
+    mutableNavRouteState: MutableStateFlow<MainAppNavState?>,
     screenAuthViewModel:ScreenAuthViewModel= viewModel()
 ) {
 
@@ -148,7 +146,11 @@ fun ScreenAuth(
             Row {
                 Button(
                     modifier = childModifier.height(TextFieldDefaults.MinHeight),
-                    onClick = { /*TODO*/ },
+                    onClick = {
+                        rememberCoroutineScope.launch {
+                            mutableNavRouteState.emit(MainAppNavState.ScreenCatalog)
+                        }
+                    },
                     shape = RoundedCornerShape(dimensionResource(R.dimen.rounded0))
                 ) {
 
@@ -203,10 +205,8 @@ fun ScreenAuthPreview(
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background
         ) {
-            val navController =
-                rememberNavController()
 
-            ScreenAuth(navController)
+            ScreenAuth(MutableStateFlow(null))
         }
     }
 }

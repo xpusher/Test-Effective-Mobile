@@ -13,18 +13,15 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            MainNavigation()
+
+            MainNavigation(mainViewModel.mutableNavRouteState)
 
             mainViewModel.mainDialog
                 .collectAsStateWithLifecycle()
                 .value?.invoke()
 
         }
-    }
 
-    override fun onResume() {
-        super.onResume()
-        mainViewModel.updateMocky()
     }
 }
 
