@@ -9,7 +9,7 @@ import com.testeffectivemobile.ui.MainNavigation
 
 class MainActivity : ComponentActivity() {
 
-    val mainViewModel:MainViewModel by viewModels()
+    private val mainViewModel:MainViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {

@@ -54,6 +54,7 @@ class MainViewModel(private val application: Application):AndroidViewModel(appli
                         }
                         else
                             throw Exception()
+
                     }
 
 
@@ -61,8 +62,9 @@ class MainViewModel(private val application: Application):AndroidViewModel(appli
             }
             catch (e:Exception)
             {
-                mainDialog.emit {
-                    errorUpdateMocky(mainDialog) }
+                mainDialog.emit(
+                    errorUpdateMocky(mainDialog)
+                )
             }
 
         }

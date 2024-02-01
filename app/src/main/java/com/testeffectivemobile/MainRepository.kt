@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.Context
 import com.testeffectivemobile.models.MockyContent
 import org.json.JSONObject
+import kotlin.reflect.full.isSubclassOf
 
 class MainRepository(private val application: Application) :
     JSONObject(application
@@ -23,6 +24,7 @@ class MainRepository(private val application: Application) :
 
             @JvmStatic private val map
             get() = Keys::class.nestedClasses
+                .filter { klass -> klass.isSubclassOf(Keys::class) }
                 .map { klass -> klass.objectInstance }
                 .filterIsInstance<Keys>()
                 .associateBy { value -> value::class.java.simpleName }
