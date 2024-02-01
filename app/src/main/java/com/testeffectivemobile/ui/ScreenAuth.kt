@@ -7,15 +7,9 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
@@ -28,7 +22,6 @@ import com.testeffectivemobile.ui.theme.TestEffectiveMobileTheme
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ScreenAuth(
     navController: NavHostController,
@@ -42,14 +35,14 @@ fun ScreenAuth(
         modifier = Modifier.wrapContentHeight().padding(10.dp),
         value = screenAuthViewModel.userFirstName.collectAsStateWithLifecycle().value,
         onValueChange = {
-            rememberCoroutineScope.launch {
-                screenAuthViewModel.userFirstName.emit(it)
-            }
+//            rememberCoroutineScope.launch {
+//                screenAuthViewModel.userFirstName.emit(it)
+//            }
         },
-        colors = TextFieldDefaults.outlinedTextFieldColors(
-            focusedBorderColor = Color.White,
-            unfocusedBorderColor = Color.White
-        )
+//        colors = TextFieldDefaults.outlinedTextFieldColors(
+//            focusedBorderColor = Color.White,
+//            unfocusedBorderColor = Color.White
+//        )
     )
 
 }
