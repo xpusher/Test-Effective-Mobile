@@ -20,8 +20,10 @@ fun Divider0(){
         color = Color.Transparent
     )
 }
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopAppBar(stringTitle:String){
+
     CenterAlignedTopAppBar(
         title = {
             Text(text = stringTitle)
