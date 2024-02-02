@@ -5,6 +5,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -12,6 +13,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.testeffectivemobile.models.MockyContent
 import com.testeffectivemobile.ui.theme.TestEffectiveMobileTheme
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
@@ -19,7 +21,9 @@ import kotlin.reflect.full.isSubclassOf
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainNavigation(mutableNavRouteState: MutableStateFlow<MainAppNavState?>
+fun MainNavigation(
+    mutableNavRouteState: MutableStateFlow<MainAppNavState?>,
+    mutableMockyContent: MutableStateFlow<MockyContent?>
 ) {
     TestEffectiveMobileTheme {
         Surface(
@@ -50,14 +54,6 @@ fun MainNavigation(mutableNavRouteState: MutableStateFlow<MainAppNavState?>
                     composable(destination)
                     {
 
-                        rememberCoroutineScope().launch {
-
-                            mutableNavRouteState.emit(
-                                MainAppNavState.valueOf(destination)
-                            )
-
-                        }
-
                         when (destination
                         ) {
                             MainAppNavState.ScreenAuth::class.java.simpleName
@@ -65,7 +61,9 @@ fun MainNavigation(mutableNavRouteState: MutableStateFlow<MainAppNavState?>
                                 ScreenAuth(mutableNavRouteState)
                             }
                             MainAppNavState.ScreenCatalog::class.java.simpleName->{
-                                ScreenCatalog()
+                                ScreenCatalog(
+                                    mutableNavRouteState,
+                                    mutableMockyContent)
                             }
                         }
                     }
@@ -73,7 +71,20 @@ fun MainNavigation(mutableNavRouteState: MutableStateFlow<MainAppNavState?>
 
             }
 
+            LaunchedEffect("synchronize mutableNavRouteState"
+            ){
 
+                navController.currentBackStackEntryFlow
+                    .collect {navBackStackEntry->
+                        navBackStackEntry.destination.route
+                            ?.let {
+                                mutableNavRouteState.emit(
+                                    MainAppNavState.valueOf(it)
+                                )
+                            }
+                    }
+
+            }
             when(mutableNavRouteState.collectAsStateWithLifecycle().value)
             {
                 MainAppNavState.ScreenAuth->{
@@ -119,6 +130,9 @@ sealed class MainAppNavState{
 fun GreetingPreview() {
 
     TestEffectiveMobileTheme {
-        MainNavigation(MutableStateFlow(MainAppNavState.ScreenAuth))
+        MainNavigation(
+            MutableStateFlow(MainAppNavState.ScreenAuth),
+            MutableStateFlow(MockyContent())
+        )
     }
 }

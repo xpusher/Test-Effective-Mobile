@@ -14,7 +14,9 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
 
-            MainNavigation(mainViewModel.mutableNavRouteState)
+            MainNavigation(
+                mainViewModel.mutableNavRouteState,
+                mainViewModel.mutableMockyContent)
 
             mainViewModel.mainDialog
                 .collectAsStateWithLifecycle()

@@ -3,4 +3,7 @@
     <string name="url_mocky">https://run.mocky.io/v3/97e721a7-0a66-4cae-b445-83cc0bcf9010</string>
     <string name="dialog_error_update_mocky_text">Error update</string>
     <string name="screen_auth_title">Вход</string>
+    <string name="screen_catalog_title">Каталог</string>
+    <string name="screen_catalog_text_empty">Каталог пуст</string>
+    <string name="screen_catalog_text_loading">Каталог загружается</string>
 </resources>

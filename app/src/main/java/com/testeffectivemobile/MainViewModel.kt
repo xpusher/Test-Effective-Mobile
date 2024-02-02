@@ -19,7 +19,7 @@ class MainViewModel(private val application: Application):
         MutableStateFlow<(@Composable ()->Unit)?>(null)
 
     val mutableMockyContent=
-        MutableStateFlow<MockyContent>(MockyContent())
+        MutableStateFlow<MockyContent?>(null)
 
 
     private val mainPrefStorage=
@@ -43,17 +43,22 @@ class MainViewModel(private val application: Application):
                     }
                     MainAppNavState.CreateNav->{
 
-//                        try {
-//                            mainRepository
-//                                .updateMockyContent(mutableMockyContent)
-//                        }catch (e:Exception){
-//                            mainDialog.emit(
-//                                errorUpdateMocky(mainDialog)
-//                            )
-//                        }
-
                         mutableNavRouteState
                             .emit(MainAppNavState.ScreenAuth)
+                    }
+                    MainAppNavState.ScreenCatalog->{
+
+                        try {
+
+                            mainRepository
+                                .updateMockyContent(mutableMockyContent)
+
+                        }catch (e:Exception){
+                            mainDialog.emit(
+                                errorUpdateMocky(mainDialog)
+                            )
+                        }
+
                     }
                     else->{}
                 }

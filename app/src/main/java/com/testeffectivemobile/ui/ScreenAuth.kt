@@ -47,11 +47,7 @@ fun ScreenAuth(
 
     Scaffold(
         topBar = {
-            CenterAlignedTopAppBar(
-                title = {
-                    Text(text = stringResource(id = R.string.screen_auth_title))
-                },
-            )
+            TopAppBar(stringResource(id = R.string.screen_auth_title))
         }){innerPadding->
 
         val rememberCoroutineScope =
