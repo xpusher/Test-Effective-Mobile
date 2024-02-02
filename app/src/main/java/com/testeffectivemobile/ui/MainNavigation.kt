@@ -6,6 +6,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -25,28 +26,31 @@ fun MainNavigation(
     mutableNavRouteState: MutableStateFlow<MainAppNavState?>,
     mutableMockyContent: MutableStateFlow<MockyContent?>
 ) {
-    TestEffectiveMobileTheme {
-        Surface(
-            modifier = Modifier.fillMaxSize(),
-            color = MaterialTheme.colorScheme.background
-        ) {
+    val navController =
+        rememberNavController()
 
-            val navController =
-                rememberNavController()
+    val rememberCoroutineScope=
+        rememberCoroutineScope()
+
+    val rememberStartDestination=
+        remember {
+                if (mutableNavRouteState.value==null)
+                    MainAppNavState.ScreenAuth::class.java.simpleName
+                else
+                    mutableNavRouteState.value!!::class.java.simpleName
+
+        }
 
             val routes = listOf(
                 MainAppNavState.ScreenAuth::class.java.simpleName,
                 MainAppNavState.CreateNav::class.java.simpleName,
                 MainAppNavState.ScreenCatalog::class.java.simpleName,
+                MainAppNavState.ScreenCatalogItem::class.java.simpleName,
             )
 
             NavHost(
                 navController = navController,
-                startDestination =
-                if (mutableNavRouteState.value==null)
-                    MainAppNavState.CreateNav::class.java.simpleName
-                else
-                    mutableNavRouteState.value!!::class.java.simpleName
+                startDestination =rememberStartDestination
             ) {
 
 
@@ -60,10 +64,16 @@ fun MainNavigation(
                             ->{
                                 ScreenAuth(mutableNavRouteState)
                             }
-                            MainAppNavState.ScreenCatalog::class.java.simpleName->{
+                            MainAppNavState.ScreenCatalog::class.java.simpleName
+                            ->{
                                 ScreenCatalog(
                                     mutableNavRouteState,
                                     mutableMockyContent)
+                            }
+                            MainAppNavState.ScreenCatalogItem::class.java.simpleName
+                            ->{
+
+                                ScreenCatalogItem(mutableMockyContent)
                             }
                         }
                     }
@@ -78,32 +88,46 @@ fun MainNavigation(
                     .collect {navBackStackEntry->
                         navBackStackEntry.destination.route
                             ?.let {
-                                mutableNavRouteState.emit(
-                                    MainAppNavState.valueOf(it)
-                                )
+                                rememberCoroutineScope.launch {
+                                    mutableNavRouteState.emit(
+                                        MainAppNavState.valueOf(it)
+                                    )
+                                }
                             }
                     }
 
             }
-            when(mutableNavRouteState.collectAsStateWithLifecycle().value)
+            val state=mutableNavRouteState.collectAsStateWithLifecycle()
+            when(state.value)
             {
-                MainAppNavState.ScreenAuth->{
-                    navController.navigate(MainAppNavState.ScreenAuth::class.java.simpleName){
+                MainAppNavState.valueOf(navController.currentDestination?.route)
+                ->{
+                    "".toString()
+                }
+
+                MainAppNavState.ScreenAuth
+                ->{
+                    navController.navigate(MainAppNavState.ScreenAuth::class.java.simpleName)
+                    {
                         popUpTo(0)
                     }
                 }
-                MainAppNavState.ScreenCatalog->{
-                    navController.navigate(MainAppNavState.ScreenCatalog::class.java.simpleName){
+                MainAppNavState.ScreenCatalog
+                ->{
+                    navController.navigate(MainAppNavState.ScreenCatalog::class.java.simpleName)
+                    {
                         popUpTo(0)
                     }
+                }
+                MainAppNavState.ScreenCatalogItem
+                ->{
+                    navController.navigate(MainAppNavState.ScreenCatalogItem::class.java.simpleName)
                 }
                 else->{}
             }
-        }
-    }
 }
 
-sealed class MainAppNavState{
+sealed class MainAppNavState(var param:Any?=null){
     companion object {
 
         @JvmStatic private val map
@@ -113,15 +137,19 @@ sealed class MainAppNavState{
                 .filterIsInstance<MainAppNavState>()
                 .associateBy { value -> value::class.java.simpleName }
 
-        @JvmStatic fun valueOf(value: String) = requireNotNull(map[value]) {
-            "${MainAppNavState::class.java.name}.$value"
-        }
+        @JvmStatic fun valueOf(value: String?) =
+            if (value==null)
+                null
+            else requireNotNull(map[value]) {
+                "${MainAppNavState::class.java.name}.$value"
+            }
 
         @JvmStatic fun values() = map.values.toTypedArray()
     }
 
     data object ScreenAuth:MainAppNavState()
     data object ScreenCatalog:MainAppNavState()
+    data object ScreenCatalogItem:MainAppNavState()
     data object CreateNav:MainAppNavState()
 }
 
@@ -130,9 +158,15 @@ sealed class MainAppNavState{
 fun GreetingPreview() {
 
     TestEffectiveMobileTheme {
-        MainNavigation(
-            MutableStateFlow(MainAppNavState.ScreenAuth),
-            MutableStateFlow(MockyContent())
-        )
+            Surface(
+                modifier = Modifier.fillMaxSize(),
+                color = MaterialTheme.colorScheme.background
+            ) {
+
+                MainNavigation(
+                    MutableStateFlow(MainAppNavState.ScreenAuth),
+                    MutableStateFlow(MockyContent())
+                )
+            }
     }
 }

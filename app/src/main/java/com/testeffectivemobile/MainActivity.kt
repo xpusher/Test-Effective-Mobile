@@ -4,8 +4,13 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.testeffectivemobile.ui.MainNavigation
+import com.testeffectivemobile.ui.theme.TestEffectiveMobileTheme
 
 class MainActivity : ComponentActivity() {
 
@@ -13,15 +18,22 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
+            TestEffectiveMobileTheme {
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colorScheme.background
+                ) {
 
-            MainNavigation(
-                mainViewModel.mutableNavRouteState,
-                mainViewModel.mutableMockyContent)
+                    MainNavigation(
+                        mainViewModel.mutableNavRouteState,
+                        mainViewModel.mutableMockyContent
+                    )
 
-            mainViewModel.mainDialog
-                .collectAsStateWithLifecycle()
-                .value?.invoke()
-
+                    mainViewModel.mainDialog
+                        .collectAsStateWithLifecycle()
+                        .value?.invoke()
+                }
+            }
         }
 
     }
