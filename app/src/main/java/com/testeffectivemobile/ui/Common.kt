@@ -2,16 +2,60 @@
 
 package com.testeffectivemobile.ui
 
+import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldColors
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.input.OffsetMapping
+import androidx.compose.ui.text.input.TransformedText
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import com.testeffectivemobile.R
+import kotlin.math.absoluteValue
+
+@Composable
+fun TextFieldColorsColorsValid(): TextFieldColors
+{
+    return OutlinedTextFieldDefaults.colors(
+        focusedBorderColor = Color.Transparent,
+        unfocusedBorderColor = Color.Transparent,
+        unfocusedContainerColor = colorResource(id = R.color.text_field_container_color),
+        focusedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
+    )
+}
+
+@Composable
+fun TextFieldColorsColorsInValid(): TextFieldColors {
+    return OutlinedTextFieldDefaults.colors(
+        focusedBorderColor = Color.Transparent,
+        unfocusedBorderColor = Color.Transparent,
+        unfocusedContainerColor = colorResource(id = R.color.text_field_container_color),
+        focusedContainerColor = MaterialTheme.colorScheme.errorContainer,
+    )
+}
+
+@Composable
+fun ButtonColor():ButtonColors{
+    return ButtonDefaults.buttonColors(
+            containerColor = colorResource(id = R.color.button_container_color),
+            disabledContainerColor = colorResource(id = R.color.button_container_color_disable),
+    )
+}
+@Composable
+fun ButtonColorText():Color{
+    return Color.White
+}
 
 @Composable
 fun Divider0(){
@@ -31,7 +75,41 @@ fun TopAppBar(stringTitle:String){
     )
 
 }
+class MaskVisualTransformation(private val mask: String) : VisualTransformation {
 
+    private val specialSymbolsIndices = mask.indices.filter { mask[it] != '#' }
+
+    override fun filter(text: AnnotatedString): TransformedText {
+        var out = ""
+        var maskIndex = 0
+        text.forEach { char ->
+            while (specialSymbolsIndices.contains(maskIndex)) {
+                out += mask[maskIndex]
+                maskIndex++
+            }
+            out += char
+            maskIndex++
+        }
+        return TransformedText(AnnotatedString(out), offsetTranslator())
+    }
+
+    private fun offsetTranslator() = object : OffsetMapping {
+        override fun originalToTransformed(offset: Int): Int {
+            val offsetValue = offset.absoluteValue
+            if (offsetValue == 0) return 0
+            var numberOfHashtags = 0
+            val masked = mask.takeWhile {
+                if (it == '#') numberOfHashtags++
+                numberOfHashtags < offsetValue
+            }
+            return masked.length + 1
+        }
+
+        override fun transformedToOriginal(offset: Int): Int {
+            return mask.take(offset.absoluteValue).count { it == '#' }
+        }
+    }
+}
 val mockyContentString="{\n" +
         "  \"items\": [\n" +
         "    {\n" +

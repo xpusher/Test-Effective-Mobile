@@ -10,12 +10,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
-import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -27,16 +26,22 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.capitalize
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.toLowerCase
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.compose.rememberNavController
 import com.testeffectivemobile.R
 import com.testeffectivemobile.ui.theme.TestEffectiveMobileTheme
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
+import java.util.Locale
 
 @ExperimentalMaterial3Api
 @Composable
@@ -53,21 +58,25 @@ fun ScreenAuth(
         val rememberCoroutineScope =
             rememberCoroutineScope()
 
-        val colorsValid=
-            OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = Color.Transparent,
-                unfocusedBorderColor = Color.Transparent,
-                unfocusedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
-                focusedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
-            )
+        val firstName=
+            screenAuthViewModel.userFirstName
+                .collectAsStateWithLifecycle().value
+        val lastName=
+            screenAuthViewModel.userLastName
+                .collectAsStateWithLifecycle().value
+        val phone=
+            screenAuthViewModel.userPhone
+                .collectAsStateWithLifecycle().value
 
-        val colorsInValid=
-            OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = Color.Transparent,
-                unfocusedBorderColor = Color.Transparent,
-                unfocusedContainerColor = MaterialTheme.colorScheme.errorContainer,
-                focusedContainerColor = MaterialTheme.colorScheme.errorContainer,
-            )
+        val isValidFirstName =
+            screenAuthViewModel.isValidUserFirstName
+                .collectAsStateWithLifecycle().value
+        val isValidLastName =
+            screenAuthViewModel.isValidUserLastName
+                .collectAsStateWithLifecycle().value
+        val isValidPhone=
+            screenAuthViewModel.isValidUserPhone
+                .collectAsStateWithLifecycle()
 
         Column(
             modifier = Modifier
@@ -82,63 +91,78 @@ fun ScreenAuth(
         ) {
 
             val childModifier=Modifier.fillMaxWidth()
+            //region header top
             Row(modifier = Modifier.weight(1f)) {
 
             }
+            //endregion
+            //region first name
             Row {
                 OutlinedTextField(
                     modifier = childModifier,
-                    value = screenAuthViewModel.userFirstName
-                        .collectAsStateWithLifecycle().value,
+                    value = firstName,
+                    label = { Text(text = stringResource(id = R.string.screen_auth_label_first_name))},
                     onValueChange = {
                         rememberCoroutineScope.launch {
                             screenAuthViewModel.userFirstName.emit(it)
                         }
                     },
-                    colors = if (screenAuthViewModel.isValidUserFirstName.value)
-                        colorsValid
+                    colors = if (isValidFirstName)
+                        TextFieldColorsColorsValid()
                     else
-                        colorsInValid
+                        TextFieldColorsColorsInValid()
                 )
 
             }
+            //endregion
             Divider0()
+            //region last name
             Row {
                 OutlinedTextField(
                     modifier = childModifier,
-                    value = screenAuthViewModel.userLastName
-                        .collectAsStateWithLifecycle().value,
+                    value = lastName,
+                    label = { Text(text = stringResource(id = R.string.screen_auth_label_last_name))},
                     onValueChange = {
                         rememberCoroutineScope.launch {
                             screenAuthViewModel.userLastName.emit(it)
                         }
                     },
-                    colors = if (screenAuthViewModel.isValidUserLastName.value)
-                        colorsValid
+                    colors = if (isValidLastName)
+                        TextFieldColorsColorsValid()
                     else
-                        colorsInValid
+                        TextFieldColorsColorsInValid()
                 )
 
             }
+            //endregion
             Divider0()
+            //region phone
             Row {
                 OutlinedTextField(
                     modifier = childModifier,
-                    value = screenAuthViewModel.userPhone
-                        .collectAsStateWithLifecycle().value,
+                    value = phone,
+                    label = {
+                        Text(text = stringResource(id = R.string.screen_auth_label_phone))},
+                    singleLine = true,
                     onValueChange = {
                         rememberCoroutineScope.launch {
                             screenAuthViewModel.userPhone.emit(it)
                         }
                     },
-                    colors = if (screenAuthViewModel.isValidUserPhone.value)
-                        colorsValid
+                    colors = if (isValidPhone.value)
+                        TextFieldColorsColorsValid()
                     else
-                        colorsInValid
+                        TextFieldColorsColorsInValid(),
+                    placeholder = { Text(text = screenAuthViewModel.mask, color = Color.LightGray)},
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Phone),
+                    visualTransformation = MaskVisualTransformation(screenAuthViewModel.mask)
                 )
 
             }
+            //endregion
             Divider0()
+            //region button enter
             Row {
                 Button(
                     modifier = childModifier.height(TextFieldDefaults.MinHeight),
@@ -147,34 +171,51 @@ fun ScreenAuth(
                             mutableNavRouteState.emit(MainAppNavState.ScreenCatalog)
                         }
                     },
-                    shape = RoundedCornerShape(dimensionResource(R.dimen.rounded0))
+                    shape = RoundedCornerShape(dimensionResource(R.dimen.rounded0)),
+                    enabled = isValidFirstName
+                            && isValidLastName
+                            && isValidPhone.value
+                            && firstName.isNotEmpty()
+                            && lastName.isNotEmpty()
+                            && phone.isNotEmpty()
+                    ,
+                    colors = ButtonColor()
                 ) {
-
+                    Text(
+                        text = stringResource(id = R.string.screen_auth_button),
+                        color = ButtonColorText()
+                        )
                 }
             }
+            //endregion
+            //region footer
             Row(modifier = Modifier.weight(1.5f),
                 verticalAlignment = Alignment.Bottom
             ) {
-                Text(text = "asas")
+                Text(
+                    text = stringResource(id = R.string.screen_auth_footer),
+                    color = Color.LightGray,
+                    fontSize = 11.sp,
+                    textAlign = TextAlign.Center,
+                    lineHeight = 12.sp
+                )
             }
+            //endregion
         }
     }
-
-
-
 
 }
 
 class ScreenAuthViewModel:ViewModel(
 ){
 
-
+    val mask="+7 ### ###-##-##"
     val userFirstName=
-        MutableStateFlow("FirstName")
+        MutableStateFlow("")
     val userLastName=
-        MutableStateFlow("LastName")
+        MutableStateFlow("")
     val userPhone=
-        MutableStateFlow("+7 922 00-00-00")
+        MutableStateFlow("")
 
     val isValidUserFirstName=
         MutableStateFlow(true)
@@ -183,14 +224,105 @@ class ScreenAuthViewModel:ViewModel(
     val isValidUserPhone=
         MutableStateFlow(true)
 
+    val regexPhone=
+        Regex("[0-9[ ][-][+]]")
+    val regexCyrillic=
+        Regex("[а-я[А-Я]]")
     init {
+
+//        //region first
         viewModelScope.launch {
             userFirstName.collect{
-                it.toString()
+                isValidUserFirstName.emit(true)
+                for ( i in it.indices) {
+                    if (!it[i].toString().contains(regexCyrillic)) {
+                        viewModelScope.launch {
+                            isValidUserFirstName.emit(false)
+                        }
+                        delay(300)
+                        userFirstName.value =
+                            it.removeRange(i, i + 1)
+                    }
+                }
+                userFirstName.value=
+                    userFirstName.value.replaceFirstChar {capitChar->
+                    if (capitChar.isLowerCase())
+                        capitChar.titlecase(
+                            Locale.getDefault())
+                    else
+                        capitChar.toString()
+                }
+
             }
         }
+//        //endregion
+//        //region last
+        viewModelScope.launch {
+            userLastName.collect{
+                isValidUserLastName.emit(true)
+                for ( i in it.indices) {
+                    if (!it[i].toString().contains(regexCyrillic)) {
+                        viewModelScope.launch {
+                            isValidUserLastName.emit(false)
+                        }
+                        delay(300)
+                        userLastName.value =
+                            it.removeRange(i, i + 1)
+                    }
+                }
+                userLastName.value=userLastName.value.replaceFirstChar {capitChar->
+                    if (capitChar.isLowerCase())
+                        capitChar.titlecase(
+                            Locale.getDefault())
+                    else
+                        capitChar.toString()
+                }
+
+            }
+        }
+//        //endregion
+        //region phone
+        viewModelScope.launch {
+            userPhone.collect{
+
+                for ( i in it.indices) {
+                    val currentChar=it[i]
+                    val removeChar =
+                        if (i<mask.count { tmp-> tmp.toString()=="#" }) {
+
+                            !currentChar
+                                .toString()
+                                .contains(regexPhone)
+                                    ||
+                                    (i == 0 && currentChar == mask[1])
+
+                        }
+                        else{
+                            true
+                        }
+                    if (removeChar) {
+                        viewModelScope.launch {
+                            isValidUserPhone.emit(false)
+                        }
+                        delay(300)
+                        userPhone.value =
+                            it.removeRange(i, i + 1)
+                        isValidUserPhone.emit(false)
+                    }
+                }
+
+                isValidUserPhone.emit(
+                    mask.count { tmp-> tmp.toString()=="#" }
+                            ==
+                            userPhone.value.length
+                )
+            }
+        }
+        //endregion
+
     }
 }
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview(showBackground = true)
 @Composable

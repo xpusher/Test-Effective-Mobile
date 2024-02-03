@@ -6,4 +6,9 @@
     <string name="screen_catalog_title">Каталог</string>
     <string name="screen_catalog_text_empty">Каталог пуст</string>
     <string name="screen_catalog_text_loading">Каталог загружается</string>
+    <string name="screen_auth_button">Войти</string>
+    <string name="screen_auth_label_first_name">Имя</string>
+    <string name="screen_auth_label_last_name">Фамилия</string>
+    <string name="screen_auth_label_phone">Номер телефона</string>
+    <string name="screen_auth_footer">Нажимая кнопку \"Войти\", Вы принимаете /n условия программы конфедициальности</string>
 </resources>

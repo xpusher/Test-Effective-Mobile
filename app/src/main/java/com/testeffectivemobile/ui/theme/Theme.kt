@@ -54,14 +54,10 @@ fun TestEffectiveMobileTheme(
                 dynamicDarkColorScheme(context)
             else
                 dynamicLightColorScheme(context)
-                    .copy(
-                        secondaryContainer = colorResource(id = R.color.text_field_container_color))
         }
 
         darkTheme -> DarkColorScheme
         else -> LightColorScheme
-            .copy(
-                secondaryContainer = colorResource(id = R.color.text_field_container_color))
     }
     val view = LocalView.current
     if (!view.isInEditMode) {

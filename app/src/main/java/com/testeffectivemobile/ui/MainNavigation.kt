@@ -100,10 +100,10 @@ fun MainNavigation(
             val state=mutableNavRouteState.collectAsStateWithLifecycle()
             when(state.value)
             {
-                MainAppNavState.valueOf(navController.currentDestination?.route)
-                ->{
-                    "".toString()
-                }
+//                MainAppNavState.valueOf(navController.currentDestination?.route)
+//                ->{
+//                    "".toString()
+//                }
 
                 MainAppNavState.ScreenAuth
                 ->{
@@ -164,7 +164,7 @@ fun GreetingPreview() {
             ) {
 
                 MainNavigation(
-                    MutableStateFlow(MainAppNavState.ScreenAuth),
+                    MutableStateFlow(null),
                     MutableStateFlow(MockyContent())
                 )
             }
