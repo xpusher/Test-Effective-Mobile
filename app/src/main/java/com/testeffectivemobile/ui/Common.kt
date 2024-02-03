@@ -10,10 +10,14 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenu
@@ -62,7 +66,8 @@ val routes = listOf(
 )
 
 @Composable
-fun BottomMenu(navHostController: NavHostController) {
+fun BottomMenu(navHostController: NavHostController
+) {
     BottomNavigation(
         backgroundColor = MaterialTheme.colorScheme.background
     ) {
@@ -258,6 +263,38 @@ fun DropdownRateCatalogPreview(
     DropdownRateCatalog()
 }
 
+@Composable
+fun CarouselTags(){
+
+    var tags= listOf(
+        "Смотреть все",
+        "Лицо",
+        "Тело",
+        "Загар",
+        "Маски",
+    )
+
+    LazyHorizontalGrid(
+        modifier = Modifier.height(70.dp),
+        rows = GridCells.Fixed(1)){
+        items(tags.size){
+            Card(modifier = Modifier
+                .padding(start = 5.dp)
+                .wrapContentHeight()) {
+                Text(
+                    modifier = Modifier.padding(start = 15.dp, top = 10.dp, bottom = 10.dp, end = 15.dp),
+                    text = tags[it])
+
+            }
+        }
+    }
+}
+@Preview(showBackground = true)
+@Composable
+fun CarouselTagsPreview(
+) {
+    CarouselTags()
+}
 
 @Composable
 fun UnderConstruction(){

@@ -81,6 +81,9 @@ fun ScreenCatalog(
 
                 }
             }
+            Row(modifier = Modifier.fillMaxWidth()) {
+                CarouselTags()
+            }
             Row {
                 LazyVerticalGrid(columns = GridCells.Fixed(2)){
                     items(count = mockyContent!!.items.length()) {position->
