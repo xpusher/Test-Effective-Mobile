@@ -124,9 +124,9 @@ fun ScreenAuth(
                         }
                     },
                     colors = if (isValidFirstName)
-                        TextFieldColorsColorsValid()
+                        textFieldColorsColorsValid()
                     else
-                        TextFieldColorsColorsInValid(),
+                        textFieldColorsColorsInValid(),
                     trailingIcon = {
                         if (firstName.isNotEmpty()) {
                             Icon(
@@ -159,9 +159,9 @@ fun ScreenAuth(
                         }
                     },
                     colors = if (isValidLastName)
-                        TextFieldColorsColorsValid()
+                        textFieldColorsColorsValid()
                     else
-                        TextFieldColorsColorsInValid(),
+                        textFieldColorsColorsInValid(),
                     trailingIcon = {
                         if (lastName.isNotEmpty()) {
                             Icon(
@@ -196,9 +196,9 @@ fun ScreenAuth(
                         }
                     },
                     colors = if (isValidPhone.value)
-                        TextFieldColorsColorsValid()
+                        textFieldColorsColorsValid()
                     else
-                        TextFieldColorsColorsInValid(),
+                        textFieldColorsColorsInValid(),
                     placeholder = { Text(text = screenAuthViewModel.mask, color = Color.LightGray)},
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Phone),
@@ -239,11 +239,11 @@ fun ScreenAuth(
                             && lastName.isNotEmpty()
                             && phone.isNotEmpty()
                     ,
-                    colors = ButtonColor()
+                    colors = buttonColor()
                 ) {
                     Text(
                         text = stringResource(id = R.string.screen_auth_button),
-                        color = ButtonColorText()
+                        color = buttonColorText()
                         )
                 }
             }

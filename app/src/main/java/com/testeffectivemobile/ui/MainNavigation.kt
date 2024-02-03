@@ -44,92 +44,84 @@ fun MainNavigation(
 
         }
 
-            val routes = listOf(
-                MainAppNavState.ScreenAuth::class.java.simpleName,
-                MainAppNavState.CreateNav::class.java.simpleName,
-                MainAppNavState.ScreenCatalog::class.java.simpleName,
-                MainAppNavState.ScreenCatalogItem::class.java.simpleName,
-            )
+    NavHost(
+        navController = navController,
+        startDestination =rememberStartDestination
+    ) {
 
-            NavHost(
-                navController = navController,
-                startDestination =rememberStartDestination
-            ) {
+        routes.forEach { destination ->
+            composable(destination)
+            {
+                when (destination
+                ) {
+                    MainAppNavState.ScreenAuth::class.java.simpleName
+                    ->{
+                        ScreenAuth(
+                            mutableNavRouteState=mutableNavRouteState,
+                            mainPrefStorage = mainPrefStorage)
+                    }
+                    MainAppNavState.ScreenCatalog::class.java.simpleName
+                    ->{
+                        ScreenCatalog(
+                            mutableNavRouteState,
+                            mutableMockyContent)
+                    }
+                    MainAppNavState.ScreenCatalogItem::class.java.simpleName
+                    ->{
 
+                        ScreenCatalogItem(mutableMockyContent)
+                    }
+                }
+            }
+        }
 
-                routes.forEach { destination ->
-                    composable(destination)
-                    {
+    }
 
-                        when (destination
-                        ) {
-                            MainAppNavState.ScreenAuth::class.java.simpleName
-                            ->{
-                                ScreenAuth(
-                                    mutableNavRouteState=mutableNavRouteState,
-                                    mainPrefStorage = mainPrefStorage)
-                            }
-                            MainAppNavState.ScreenCatalog::class.java.simpleName
-                            ->{
-                                ScreenCatalog(
-                                    mutableNavRouteState,
-                                    mutableMockyContent)
-                            }
-                            MainAppNavState.ScreenCatalogItem::class.java.simpleName
-                            ->{
+    LaunchedEffect("synchronize mutableNavRouteState"
+    ){
 
-                                ScreenCatalogItem(mutableMockyContent)
-                            }
+        navController.currentBackStackEntryFlow
+            .collect {navBackStackEntry->
+                navBackStackEntry.destination.route
+                    ?.let {
+                        rememberCoroutineScope.launch {
+                            mutableNavRouteState.emit(
+                                MainAppNavState.valueOf(it)
+                            )
                         }
                     }
-                }
-
             }
 
-            LaunchedEffect("synchronize mutableNavRouteState"
-            ){
+    }
 
-                navController.currentBackStackEntryFlow
-                    .collect {navBackStackEntry->
-                        navBackStackEntry.destination.route
-                            ?.let {
-                                rememberCoroutineScope.launch {
-                                    mutableNavRouteState.emit(
-                                        MainAppNavState.valueOf(it)
-                                    )
-                                }
-                            }
-                    }
+    val state=
+        mutableNavRouteState.collectAsStateWithLifecycle()
 
-            }
-            val state=mutableNavRouteState.collectAsStateWithLifecycle()
-            when(state.value)
+    when(state.value)
+    {
+
+        MainAppNavState.ScreenAuth
+        ->{
+            navController.navigate(MainAppNavState.ScreenAuth::class.java.simpleName)
             {
-//                MainAppNavState.valueOf(navController.currentDestination?.route)
-//                ->{
-//                    "".toString()
-//                }
-
-                MainAppNavState.ScreenAuth
-                ->{
-                    navController.navigate(MainAppNavState.ScreenAuth::class.java.simpleName)
-                    {
-                        popUpTo(0)
-                    }
-                }
-                MainAppNavState.ScreenCatalog
-                ->{
-                    navController.navigate(MainAppNavState.ScreenCatalog::class.java.simpleName)
-                    {
-                        popUpTo(0)
-                    }
-                }
-                MainAppNavState.ScreenCatalogItem
-                ->{
-                    navController.navigate(MainAppNavState.ScreenCatalogItem::class.java.simpleName)
-                }
-                else->{}
+                popUpTo(0)
             }
+        }
+        MainAppNavState.ScreenCatalog
+        ->{
+            navController.navigate(MainAppNavState.ScreenCatalog::class.java.simpleName)
+            {
+                popUpTo(0)
+            }
+        }
+        MainAppNavState.ScreenCatalogItem
+        ->{
+            navController.navigate(MainAppNavState.ScreenCatalogItem::class.java.simpleName)
+        }
+        else->{}
+    }
+
+
 }
 
 sealed class MainAppNavState(var param:Any?=null){

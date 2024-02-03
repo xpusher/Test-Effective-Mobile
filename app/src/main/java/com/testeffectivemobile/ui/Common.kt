@@ -2,11 +2,16 @@
 
 package com.testeffectivemobile.ui
 
+import androidx.compose.material.BottomNavigation
+import androidx.compose.material.BottomNavigationItem
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
@@ -15,17 +20,39 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.OffsetMapping
 import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.unit.dp
 import com.testeffectivemobile.R
 import kotlin.math.absoluteValue
 
 @Composable
-fun TextFieldColorsColorsValid(): TextFieldColors
+fun BottomMenu(){
+    BottomNavigation(
+        backgroundColor = MaterialTheme.colorScheme.background
+    ) {
+        routes.forEach {
+            BottomNavigationItem(
+                icon = { Icon(Icons.Filled.Favorite,
+                    contentDescription = null,) },
+                onClick = {},
+                label = { Text(text = "xcxcxcx")},
+                selected = true
+            )
+        }
+    }
+}
+
+val routes = listOf(
+    MainAppNavState.ScreenAuth::class.java.simpleName,
+    MainAppNavState.CreateNav::class.java.simpleName,
+    MainAppNavState.ScreenCatalog::class.java.simpleName,
+    MainAppNavState.ScreenCatalogItem::class.java.simpleName,
+)
+
+@Composable
+fun textFieldColorsColorsValid(): TextFieldColors
 {
     return OutlinedTextFieldDefaults.colors(
         focusedBorderColor = Color.Transparent,
@@ -36,7 +63,7 @@ fun TextFieldColorsColorsValid(): TextFieldColors
 }
 
 @Composable
-fun TextFieldColorsColorsInValid(): TextFieldColors {
+fun textFieldColorsColorsInValid(): TextFieldColors {
     return OutlinedTextFieldDefaults.colors(
         focusedBorderColor = Color.Transparent,
         unfocusedBorderColor = Color.Transparent,
@@ -46,14 +73,15 @@ fun TextFieldColorsColorsInValid(): TextFieldColors {
 }
 
 @Composable
-fun ButtonColor():ButtonColors{
+fun buttonColor():ButtonColors{
     return ButtonDefaults.buttonColors(
             containerColor = colorResource(id = R.color.button_container_color),
             disabledContainerColor = colorResource(id = R.color.button_container_color_disable),
     )
 }
+
 @Composable
-fun ButtonColorText():Color{
+fun buttonColorText():Color{
     return Color.White
 }
 

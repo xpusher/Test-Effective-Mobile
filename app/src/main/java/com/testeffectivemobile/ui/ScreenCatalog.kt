@@ -91,6 +91,9 @@ fun ScreenCatalog(
     Scaffold(
         topBar = {
             TopAppBar(stringResource(id = R.string.screen_catalog_title))
+        },
+        bottomBar = {
+            BottomMenu()
         }) { innerPadding ->
         Box(
             modifier = Modifier.padding(innerPadding)
