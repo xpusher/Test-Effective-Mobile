@@ -25,12 +25,10 @@ import kotlin.reflect.full.isSubclassOf
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainNavigation(
-    mutableNavController: MutableStateFlow<NavHostController?>,
+    navHostController: NavHostController,
     mutableMockyContent: MutableStateFlow<MockyContent?>,
     mainPrefStorage: MainPrefStorage
 ) {
-    val navHostController =
-        rememberNavController()
 
     NavHost(
         navController = navHostController,
@@ -67,12 +65,6 @@ fun MainNavigation(
 
     }
 
-    LaunchedEffect("start navigation"
-    ){
-        mutableNavController.emit(navHostController)
-    }
-
-
 }
 
 @Preview(showBackground = true)
@@ -86,7 +78,7 @@ fun GreetingPreview() {
             ) {
 
                 MainNavigation(
-                    MutableStateFlow(null),
+                    rememberNavController(),
                     MutableStateFlow(MockyContent()),
                     MainPrefStorage(LocalContext.current)
                 )

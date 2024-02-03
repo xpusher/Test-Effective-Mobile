@@ -9,6 +9,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.compose.rememberNavController
 import com.testeffectivemobile.ui.MainNavigation
 import com.testeffectivemobile.ui.theme.TestEffectiveMobileTheme
 
@@ -23,9 +24,11 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
+                    val navHostController =
+                        rememberNavController()
 
                     MainNavigation(
-                        mainViewModel.mutableNavController,
+                        navHostController,
                         mainViewModel.mutableMockyContent,
                         mainViewModel.mainPrefStorage
                     )
@@ -33,6 +36,9 @@ class MainActivity : ComponentActivity() {
                     mainViewModel.mainDialog
                         .collectAsStateWithLifecycle()
                         .value?.invoke()
+
+                    mainViewModel
+                        .addNavHostController(navHostController)
                 }
             }
         }
