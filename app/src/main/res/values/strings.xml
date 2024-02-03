@@ -16,4 +16,7 @@
     <string name="screen_basket_title">Корзина</string>
     <string name="screen_stock_title">Акции</string>
     <string name="screen_profil_title">Личный\nкабинет</string>
+    <string name="rate_catalog_0">По популярности</string>
+    <string name="rate_catalog_1">По уменьшению</string>
+    <string name="rate_catalog_3">По возрастанию цены</string>
 </resources>
