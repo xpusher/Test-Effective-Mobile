@@ -1,33 +1,34 @@
 package com.testeffectivemobile
 
-import android.app.Application
 import android.content.Context
 import com.testeffectivemobile.models.MockyContent
+import com.testeffectivemobile.models.UserProfile
 import org.json.JSONObject
 import kotlin.reflect.full.isSubclassOf
 
-class MainPrefStorage(private val application: Application) :
-    JSONObject(application
+class MainPrefStorage(private val context: Context) :
+    JSONObject(context
         .applicationContext
         .getSharedPreferences(
             prefName,
             Context.MODE_PRIVATE)
-        .getString(prefName,JSONObject().toString())!!) {
+        .getString(prefName,JSONObject().toString())!!
+    ) {
 
-        companion object {
-            private val prefName = this::class.java.simpleName
-        }
+    companion object {
+        private val prefName = this::class.java.simpleName
+    }
     sealed class  Keys(
         val defaultValue:Any?=null,
         val belongsToPref:Boolean=false,) {
         companion object {
 
             @JvmStatic private val map
-            get() = Keys::class.nestedClasses
-                .filter { klass -> klass.isSubclassOf(Keys::class) }
-                .map { klass -> klass.objectInstance }
-                .filterIsInstance<Keys>()
-                .associateBy { value -> value::class.java.simpleName }
+                get() = Keys::class.nestedClasses
+                    .filter { klass -> klass.isSubclassOf(Keys::class) }
+                    .map { klass -> klass.objectInstance }
+                    .filterIsInstance<Keys>()
+                    .associateBy { value -> value::class.java.simpleName }
 
             @JvmStatic fun valueOf(value: String) = requireNotNull(map[value]) {
                 "${Keys::class.java.name}.$value"
@@ -36,6 +37,7 @@ class MainPrefStorage(private val application: Application) :
             @JvmStatic fun values() = map.values.toTypedArray()
         }
         data object ContentMocky : Keys(belongsToPref = true, defaultValue = MockyContent())
+        data object UserProfile : Keys(belongsToPref = true, defaultValue = UserProfile())
     }
     @Suppress("UNCHECKED_CAST")
     fun <T>getField(field: Keys):T?
@@ -75,7 +77,7 @@ class MainPrefStorage(private val application: Application) :
                         this@MainPrefStorage.get(it::class.java.simpleName))
             }
 
-        application
+        context
             .applicationContext
             .getSharedPreferences(
                 prefName,
@@ -90,8 +92,13 @@ class MainPrefStorage(private val application: Application) :
     }
 
     init {
-        if (has(Keys.ContentMocky::class.java.simpleName)) {
-                setField(Keys.ContentMocky, MockyContent(getString(Keys.ContentMocky::class.java.simpleName)))
+        if (has(Keys.ContentMocky::class.java.simpleName))
+        {
+            setField(Keys.ContentMocky, MockyContent(getString(Keys.ContentMocky::class.java.simpleName)))
+        }
+        if (has(Keys.UserProfile::class.java.simpleName))
+        {
+            setField(Keys.UserProfile, UserProfile(getString(Keys.UserProfile::class.java.simpleName)))
         }
     }
 }

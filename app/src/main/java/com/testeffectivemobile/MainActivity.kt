@@ -26,7 +26,8 @@ class MainActivity : ComponentActivity() {
 
                     MainNavigation(
                         mainViewModel.mutableNavRouteState,
-                        mainViewModel.mutableMockyContent
+                        mainViewModel.mutableMockyContent,
+                        mainViewModel.mainPrefStorage
                     )
 
                     mainViewModel.mainDialog

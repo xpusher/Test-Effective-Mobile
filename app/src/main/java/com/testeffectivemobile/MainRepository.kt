@@ -10,7 +10,8 @@ import org.json.JSONObject
 
 class MainRepository(
     private val mainPrefStorage: MainPrefStorage,
-    private val application: Application) {
+    private val application: Application
+) {
     suspend fun updateMockyContent(mutableMockyContent: MutableStateFlow<MockyContent?>
     ) {
 

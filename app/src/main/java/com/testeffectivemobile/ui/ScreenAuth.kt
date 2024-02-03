@@ -20,23 +20,25 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.capitalize
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.toLowerCase
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.testeffectivemobile.MainPrefStorage
 import com.testeffectivemobile.R
+import com.testeffectivemobile.models.UserProfile
 import com.testeffectivemobile.ui.theme.TestEffectiveMobileTheme
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -47,8 +49,18 @@ import java.util.Locale
 @Composable
 fun ScreenAuth(
     mutableNavRouteState: MutableStateFlow<MainAppNavState?>,
-    screenAuthViewModel:ScreenAuthViewModel= viewModel()
+    screenAuthViewModel:ScreenAuthViewModel= viewModel(),
+    mainPrefStorage: MainPrefStorage
 ) {
+
+    LaunchedEffect("")
+    {
+        screenAuthViewModel.mutableNavRouteState=
+            mutableNavRouteState
+
+        screenAuthViewModel.mainPrefStorage
+            .emit(mainPrefStorage)
+    }
 
     Scaffold(
         topBar = {
@@ -167,9 +179,8 @@ fun ScreenAuth(
                 Button(
                     modifier = childModifier.height(TextFieldDefaults.MinHeight),
                     onClick = {
-                        rememberCoroutineScope.launch {
-                            mutableNavRouteState.emit(MainAppNavState.ScreenCatalog)
-                        }
+                        screenAuthViewModel
+                            .enter()
                     },
                     shape = RoundedCornerShape(dimensionResource(R.dimen.rounded0)),
                     enabled = isValidFirstName
@@ -208,6 +219,15 @@ fun ScreenAuth(
 
 class ScreenAuthViewModel:ViewModel(
 ){
+    lateinit var mutableNavRouteState: MutableStateFlow<MainAppNavState?>
+    lateinit var userProfile:UserProfile
+    val mainPrefStorage=
+        MutableStateFlow<MainPrefStorage?>(null)
+    fun enter() {
+        viewModelScope.launch {
+            mutableNavRouteState.emit(MainAppNavState.ScreenCatalog)
+        }
+    }
 
     val mask="+7 ### ###-##-##"
     val userFirstName=
@@ -224,101 +244,144 @@ class ScreenAuthViewModel:ViewModel(
     val isValidUserPhone=
         MutableStateFlow(true)
 
-    val regexPhone=
+    private val regexPhone=
         Regex("[0-9[ ][-][+]]")
-    val regexCyrillic=
+    private val regexCyrillic=
         Regex("[а-я[А-Я]]")
     init {
 
-//        //region first
         viewModelScope.launch {
-            userFirstName.collect{
-                isValidUserFirstName.emit(true)
-                for ( i in it.indices) {
-                    if (!it[i].toString().contains(regexCyrillic)) {
+            mainPrefStorage.collect{mainPrefStorage->
+                mainPrefStorage?.let {
+                    userProfile=
+                        it.getField<UserProfile>(MainPrefStorage.Keys.UserProfile)!!
+                    if (userProfile.isValid)
+                        enter()
+                    else {
+                        userFirstName.value = userProfile.firstName ?: ""
+                        userLastName.value = userProfile.lastName ?: ""
+                        userPhone.value = userProfile.phone ?: ""
+
+                        //region first
                         viewModelScope.launch {
-                            isValidUserFirstName.emit(false)
+                            userFirstName.collect{
+                                isValidUserFirstName.emit(true)
+                                for ( i in it.indices) {
+                                    if (!it[i].toString().contains(regexCyrillic)) {
+                                        viewModelScope.launch {
+                                            isValidUserFirstName.emit(false)
+                                        }
+                                        delay(300)
+                                        userFirstName.value =
+                                            it.removeRange(i, i + 1)
+                                    }
+                                }
+                                userFirstName.value=
+                                    userFirstName.value.replaceFirstChar {capitChar->
+                                        if (capitChar.isLowerCase())
+                                            capitChar.titlecase(
+                                                Locale.getDefault())
+                                        else
+                                            capitChar.toString()
+                                    }
+
+                                storeUserProfile()
+
+                            }
                         }
-                        delay(300)
-                        userFirstName.value =
-                            it.removeRange(i, i + 1)
+                        //endregion
+
+                        //region last
+                        viewModelScope.launch {
+                            userLastName.collect{
+                                isValidUserLastName.emit(true)
+                                for ( i in it.indices) {
+                                    if (!it[i].toString().contains(regexCyrillic)) {
+                                        viewModelScope.launch {
+                                            isValidUserLastName.emit(false)
+                                        }
+                                        delay(300)
+                                        userLastName.value =
+                                            it.removeRange(i, i + 1)
+                                    }
+                                }
+                                userLastName.value=userLastName.value.replaceFirstChar {capitChar->
+                                    if (capitChar.isLowerCase())
+                                        capitChar.titlecase(
+                                            Locale.getDefault())
+                                    else
+                                        capitChar.toString()
+                                }
+
+                                storeUserProfile()
+
+                            }
+                        }
+                        //endregion
+
+                        //region phone
+                        viewModelScope.launch {
+                            userPhone.collect{
+
+                                for ( i in it.indices) {
+                                    val currentChar=it[i]
+                                    val removeChar =
+                                        if (i<mask.count { tmp-> tmp.toString()=="#" }) {
+
+                                            !currentChar
+                                                .toString()
+                                                .contains(regexPhone)
+                                                    ||
+                                                    (i == 0 && currentChar == mask[1])
+
+                                        }
+                                        else{
+                                            true
+                                        }
+                                    if (removeChar) {
+                                        viewModelScope.launch {
+                                            isValidUserPhone.emit(false)
+                                        }
+                                        delay(300)
+                                        userPhone.value =
+                                            it.removeRange(i, i + 1)
+                                        isValidUserPhone.emit(false)
+                                    }
+                                }
+
+                                isValidUserPhone.emit(
+                                    mask.count { tmp-> tmp.toString()=="#" }
+                                            ==
+                                            userPhone.value.length
+                                )
+
+                                storeUserProfile()
+
+                            }
+                        }
+                        //endregion
+
                     }
-                }
-                userFirstName.value=
-                    userFirstName.value.replaceFirstChar {capitChar->
-                    if (capitChar.isLowerCase())
-                        capitChar.titlecase(
-                            Locale.getDefault())
-                    else
-                        capitChar.toString()
                 }
 
             }
         }
-//        //endregion
-//        //region last
-        viewModelScope.launch {
-            userLastName.collect{
-                isValidUserLastName.emit(true)
-                for ( i in it.indices) {
-                    if (!it[i].toString().contains(regexCyrillic)) {
-                        viewModelScope.launch {
-                            isValidUserLastName.emit(false)
-                        }
-                        delay(300)
-                        userLastName.value =
-                            it.removeRange(i, i + 1)
-                    }
-                }
-                userLastName.value=userLastName.value.replaceFirstChar {capitChar->
-                    if (capitChar.isLowerCase())
-                        capitChar.titlecase(
-                            Locale.getDefault())
-                    else
-                        capitChar.toString()
-                }
 
-            }
-        }
-//        //endregion
-        //region phone
-        viewModelScope.launch {
-            userPhone.collect{
+    }
 
-                for ( i in it.indices) {
-                    val currentChar=it[i]
-                    val removeChar =
-                        if (i<mask.count { tmp-> tmp.toString()=="#" }) {
+    private fun storeUserProfile(){
 
-                            !currentChar
-                                .toString()
-                                .contains(regexPhone)
-                                    ||
-                                    (i == 0 && currentChar == mask[1])
+        userProfile.firstName=
+            userFirstName.value
+        userProfile.lastName=
+            userLastName.value
+        userProfile.phone=
+            userPhone.value
 
-                        }
-                        else{
-                            true
-                        }
-                    if (removeChar) {
-                        viewModelScope.launch {
-                            isValidUserPhone.emit(false)
-                        }
-                        delay(300)
-                        userPhone.value =
-                            it.removeRange(i, i + 1)
-                        isValidUserPhone.emit(false)
-                    }
-                }
-
-                isValidUserPhone.emit(
-                    mask.count { tmp-> tmp.toString()=="#" }
-                            ==
-                            userPhone.value.length
-                )
-            }
-        }
-        //endregion
+        mainPrefStorage.value
+            ?.setField(
+                MainPrefStorage.Keys.UserProfile,
+                userProfile)
 
     }
 }
@@ -334,7 +397,9 @@ fun ScreenAuthPreview(
             color = MaterialTheme.colorScheme.background
         ) {
 
-            ScreenAuth(MutableStateFlow(null))
+            ScreenAuth(
+                mutableNavRouteState = MutableStateFlow(null),
+                mainPrefStorage = MainPrefStorage(LocalContext.current))
         }
     }
 }

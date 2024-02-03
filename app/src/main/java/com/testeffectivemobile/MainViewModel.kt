@@ -22,7 +22,7 @@ class MainViewModel(private val application: Application):
         MutableStateFlow<MockyContent?>(null)
 
 
-    private val mainPrefStorage=
+    val mainPrefStorage=
         MainPrefStorage(application)
 
     val mainRepository=

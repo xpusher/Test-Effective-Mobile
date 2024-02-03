@@ -35,6 +35,9 @@ fun ScreenCatalog(
     mutableMockyContent: MutableStateFlow<MockyContent?>
 ) {
 
+    val mockyContent=
+        mutableMockyContent.collectAsStateWithLifecycle().value
+
     @Composable
     fun EmptyCatalog(){
         Column(modifier = Modifier.fillMaxSize(),
@@ -94,9 +97,9 @@ fun ScreenCatalog(
         ) {
 
             when{
-                mutableMockyContent.value==null->
+                mockyContent==null->
                     LoadingCatalog()
-                mutableMockyContent.value!!.isEmpty()->{
+                mockyContent.isEmpty()->{
                     EmptyCatalog()
                 }
                 else->{

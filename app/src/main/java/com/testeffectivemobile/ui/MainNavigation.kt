@@ -9,11 +9,13 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.testeffectivemobile.MainPrefStorage
 import com.testeffectivemobile.models.MockyContent
 import com.testeffectivemobile.ui.theme.TestEffectiveMobileTheme
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -24,7 +26,8 @@ import kotlin.reflect.full.isSubclassOf
 @Composable
 fun MainNavigation(
     mutableNavRouteState: MutableStateFlow<MainAppNavState?>,
-    mutableMockyContent: MutableStateFlow<MockyContent?>
+    mutableMockyContent: MutableStateFlow<MockyContent?>,
+    mainPrefStorage: MainPrefStorage
 ) {
     val navController =
         rememberNavController()
@@ -62,7 +65,9 @@ fun MainNavigation(
                         ) {
                             MainAppNavState.ScreenAuth::class.java.simpleName
                             ->{
-                                ScreenAuth(mutableNavRouteState)
+                                ScreenAuth(
+                                    mutableNavRouteState=mutableNavRouteState,
+                                    mainPrefStorage = mainPrefStorage)
                             }
                             MainAppNavState.ScreenCatalog::class.java.simpleName
                             ->{
@@ -165,7 +170,8 @@ fun GreetingPreview() {
 
                 MainNavigation(
                     MutableStateFlow(null),
-                    MutableStateFlow(MockyContent())
+                    MutableStateFlow(MockyContent()),
+                    MainPrefStorage(LocalContext.current)
                 )
             }
     }
