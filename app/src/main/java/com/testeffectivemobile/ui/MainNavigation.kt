@@ -5,12 +5,9 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -19,15 +16,14 @@ import com.testeffectivemobile.MainPrefStorage
 import com.testeffectivemobile.models.MockyContent
 import com.testeffectivemobile.ui.theme.TestEffectiveMobileTheme
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.launch
-import kotlin.reflect.full.isSubclassOf
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainNavigation(
     navHostController: NavHostController,
     mutableMockyContent: MutableStateFlow<MockyContent?>,
-    mainPrefStorage: MainPrefStorage
+    mainPrefStorage: MainPrefStorage,
+    onCreateNav:()->Unit
 ) {
 
     NavHost(
@@ -40,6 +36,10 @@ fun MainNavigation(
             {
                 when (destination
                 ) {
+                    routes[0]
+                            ->{
+                                onCreateNav.invoke()
+                            }
                     routes[1]
                     ->{
                         ScreenAuth(
@@ -81,7 +81,7 @@ fun GreetingPreview() {
                     rememberNavController(),
                     MutableStateFlow(MockyContent()),
                     MainPrefStorage(LocalContext.current)
-                )
+                ){}
             }
     }
 }

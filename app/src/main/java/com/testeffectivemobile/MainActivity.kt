@@ -31,14 +31,17 @@ class MainActivity : ComponentActivity() {
                         navHostController,
                         mainViewModel.mutableMockyContent,
                         mainViewModel.mainPrefStorage
-                    )
+                    ){
+
+                        mainViewModel
+                            .addNavHostController(navHostController)
+
+                    }
 
                     mainViewModel.mainDialog
                         .collectAsStateWithLifecycle()
                         .value?.invoke()
 
-                    mainViewModel
-                        .addNavHostController(navHostController)
                 }
             }
         }
