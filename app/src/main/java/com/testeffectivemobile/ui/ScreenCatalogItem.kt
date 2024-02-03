@@ -8,17 +8,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.rememberNavController
 import com.testeffectivemobile.models.MockyContent
 import com.testeffectivemobile.ui.theme.TestEffectiveMobileTheme
 import kotlinx.coroutines.flow.MutableStateFlow
 
 @Composable
-fun ScreenCatalogItem(mutableMockyContent: MutableStateFlow<MockyContent?>) {
+fun ScreenCatalogItem(
+    id:String,
+    mutableMockyContent: MutableStateFlow<MockyContent?>) {
 
     val mockyContentItem= remember {
-        mutableMockyContent.value!!.item(
-            "${MainAppNavState.ScreenCatalogItem.param}".toInt()
-        )
+        mutableMockyContent.value!!.item(id.toInt())
     }
         Text(text = mockyContentItem.description)
 }
@@ -32,8 +33,8 @@ fun ScreenCatalogItemPreview(
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background
         ) {
-            MainAppNavState.ScreenCatalogItem.param=1
             ScreenCatalogItem(
+                0.toString(),
                 MutableStateFlow(MockyContent(mockyContentString)),
                 )
         }

@@ -45,10 +45,10 @@ fun BottomMenu(){
 }
 
 val routes = listOf(
-    MainAppNavState.ScreenAuth::class.java.simpleName,
-    MainAppNavState.CreateNav::class.java.simpleName,
-    MainAppNavState.ScreenCatalog::class.java.simpleName,
-    MainAppNavState.ScreenCatalogItem::class.java.simpleName,
+    "OnCreateNav",
+    "ScreenAuth",
+    "ScreenCatalog",
+    "ScreenCatalogItem{id}",
 )
 
 @Composable

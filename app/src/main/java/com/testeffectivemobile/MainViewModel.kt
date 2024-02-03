@@ -4,9 +4,11 @@ import android.app.Application
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.NavHostController
 import com.testeffectivemobile.models.MockyContent
-import com.testeffectivemobile.ui.MainAppNavState
 import com.testeffectivemobile.ui.errorUpdateMocky
+import com.testeffectivemobile.ui.routes
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
@@ -15,12 +17,13 @@ class MainViewModel(private val application: Application):
         application
     ) {
 
+        var jobInitNav:Job?=null
+
     val mainDialog=
         MutableStateFlow<(@Composable ()->Unit)?>(null)
 
     val mutableMockyContent=
         MutableStateFlow<MockyContent?>(null)
-
 
     val mainPrefStorage=
         MainPrefStorage(application)
@@ -30,40 +33,41 @@ class MainViewModel(private val application: Application):
             mainPrefStorage,
             application)
 
-    val mutableNavRouteState=
-        MutableStateFlow<MainAppNavState?>(null)
+    val mutableNavController=
+        MutableStateFlow<NavHostController?>(null)
 
     init {
-        viewModelScope.launch {
-            mutableNavRouteState.collect{currentRoute->
+        jobInitNav=
+            viewModelScope.launch {
+                mutableNavController
+                    .collect{navController->
 
-                when(currentRoute){
-                    MainAppNavState.ScreenAuth->{
+                        when(navController?.currentBackStackEntry?.destination?.route){
+                            routes[0]->{
+                                navController.navigate(route= routes[1])
+                            }
+                            routes[2]->{
 
-                    }
-                    MainAppNavState.CreateNav->{
+                                try {
 
-                        mutableNavRouteState
-                            .emit(MainAppNavState.ScreenAuth)
-                    }
-                    MainAppNavState.ScreenCatalog->{
+                                    mainRepository
+                                        .updateMockyContent(mutableMockyContent)
 
-                        try {
+                                }catch (e:Exception){
 
-                            mainRepository
-                                .updateMockyContent(mutableMockyContent)
+                                    mainDialog.emit(
+                                        errorUpdateMocky(mainDialog)
+                                    )
 
-                        }catch (e:Exception){
-                            mainDialog.emit(
-                                errorUpdateMocky(mainDialog)
-                            )
+                                }
+
+                                jobInitNav?.cancel()
+
+                            }
+                            else->{}
                         }
 
                     }
-                    else->{}
-                }
-
             }
-        }
     }
 }

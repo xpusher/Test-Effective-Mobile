@@ -23,6 +23,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.testeffectivemobile.R
 import com.testeffectivemobile.models.MockyContent
 import com.testeffectivemobile.ui.theme.TestEffectiveMobileTheme
@@ -31,7 +33,7 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun ScreenCatalog(
-    mutableNavRouteState: MutableStateFlow<MainAppNavState?>,
+    navHostController: NavHostController,
     mutableMockyContent: MutableStateFlow<MockyContent?>
 ) {
 
@@ -61,24 +63,14 @@ fun ScreenCatalog(
     @Composable
     fun ShowCatalog(){
 
-        val mockyContent=
-            mutableMockyContent.collectAsStateWithLifecycle().value
-
-        val rememberCoroutineScope=
-            rememberCoroutineScope()
-
         LazyVerticalGrid(columns = GridCells.Fixed(2)){
             items(count = mockyContent!!.items.length()) {position->
                 Box(modifier = Modifier
                     .aspectRatio(1f)
                     .clickable {
-
-                        MainAppNavState.ScreenCatalogItem.param =
-                            position
-
-                        rememberCoroutineScope.launch {
-                            mutableNavRouteState.emit(MainAppNavState.ScreenCatalogItem)
-                        }
+                        navHostController.navigate(
+                            route = "${routes[3]}/$position"
+                        )
 
                     }) {
                     Text(text = mockyContent.item(position).description)
@@ -129,7 +121,7 @@ fun ScreenCatalogPreview(
 //                MutableStateFlow(null),
 //                MutableStateFlow(MockyContent()))
             ScreenCatalog(
-                MutableStateFlow(null),
+                rememberNavController(),
                 MutableStateFlow(MockyContent(mockyContentString)))
         }
     }

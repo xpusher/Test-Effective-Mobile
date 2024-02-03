@@ -40,6 +40,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.testeffectivemobile.MainPrefStorage
 import com.testeffectivemobile.R
 import com.testeffectivemobile.models.UserProfile
@@ -52,19 +54,17 @@ import java.util.Locale
 @ExperimentalMaterial3Api
 @Composable
 fun ScreenAuth(
-    mutableNavRouteState: MutableStateFlow<MainAppNavState?>,
-    screenAuthViewModel:ScreenAuthViewModel= viewModel(),
-    mainPrefStorage: MainPrefStorage
+    navHostController: NavHostController,
+    mainPrefStorage: MainPrefStorage,
+    screenAuthViewModel:ScreenAuthViewModel= viewModel<ScreenAuthViewModel>()
+        .apply {
+                this@apply.navHostController=
+                    navHostController
+                this@apply.
+                    addMainPrefStorage(mainPrefStorage)
+        },
+
 ) {
-
-    LaunchedEffect("")
-    {
-        screenAuthViewModel.mutableNavRouteState=
-            mutableNavRouteState
-
-        screenAuthViewModel.mainPrefStorage
-            .emit(mainPrefStorage)
-    }
 
     Scaffold(
         topBar = {
@@ -268,13 +268,14 @@ fun ScreenAuth(
 
 class ScreenAuthViewModel:ViewModel(
 ){
-    lateinit var mutableNavRouteState: MutableStateFlow<MainAppNavState?>
+    lateinit var navHostController: NavHostController
     lateinit var userProfile:UserProfile
-    val mainPrefStorage=
-        MutableStateFlow<MainPrefStorage?>(null)
+    lateinit var mainPrefStorage:MainPrefStorage
     fun enter() {
-        viewModelScope.launch {
-            mutableNavRouteState.emit(MainAppNavState.ScreenCatalog)
+        navHostController.navigate(
+            route= routes[2]
+        ){
+            popUpTo(0)
         }
     }
 
@@ -297,126 +298,6 @@ class ScreenAuthViewModel:ViewModel(
         Regex("[0-9[ ][-][+]]")
     private val regexCyrillic=
         Regex("[а-я[А-Я]]")
-    init {
-
-        viewModelScope.launch {
-            mainPrefStorage.collect{mainPrefStorage->
-                mainPrefStorage?.let {
-                    userProfile=
-                        it.getField<UserProfile>(MainPrefStorage.Keys.UserProfile)!!
-//                    if (userProfile.isValid)
-//                        enter()
-//                    else {
-                        userFirstName.value = userProfile.firstName ?: ""
-                        userLastName.value = userProfile.lastName ?: ""
-                        userPhone.value = userProfile.phone ?: ""
-
-                        //region first
-                        viewModelScope.launch {
-                            userFirstName.collect{
-                                isValidUserFirstName.emit(true)
-                                for ( i in it.indices) {
-                                    if (!it[i].toString().contains(regexCyrillic)) {
-                                        viewModelScope.launch {
-                                            isValidUserFirstName.emit(false)
-                                        }
-                                        delay(300)
-                                        userFirstName.value =
-                                            it.removeRange(i, i + 1)
-                                    }
-                                }
-                                userFirstName.value=
-                                    userFirstName.value.replaceFirstChar {capitChar->
-                                        if (capitChar.isLowerCase())
-                                            capitChar.titlecase(
-                                                Locale.getDefault())
-                                        else
-                                            capitChar.toString()
-                                    }
-
-                                storeUserProfile()
-
-                            }
-                        }
-                        //endregion
-
-                        //region last
-                        viewModelScope.launch {
-                            userLastName.collect{
-                                isValidUserLastName.emit(true)
-                                for ( i in it.indices) {
-                                    if (!it[i].toString().contains(regexCyrillic)) {
-                                        viewModelScope.launch {
-                                            isValidUserLastName.emit(false)
-                                        }
-                                        delay(300)
-                                        userLastName.value =
-                                            it.removeRange(i, i + 1)
-                                    }
-                                }
-                                userLastName.value=userLastName.value.replaceFirstChar {capitChar->
-                                    if (capitChar.isLowerCase())
-                                        capitChar.titlecase(
-                                            Locale.getDefault())
-                                    else
-                                        capitChar.toString()
-                                }
-
-                                storeUserProfile()
-
-                            }
-                        }
-                        //endregion
-
-                        //region phone
-                        viewModelScope.launch {
-                            userPhone.collect{
-
-                                for ( i in it.indices) {
-                                    val currentChar=it[i]
-                                    val removeChar =
-                                        if (i<mask.count { tmp-> tmp.toString()=="#" }) {
-
-                                            !currentChar
-                                                .toString()
-                                                .contains(regexPhone)
-                                                    ||
-                                                    (i == 0 && currentChar == mask[1])
-
-                                        }
-                                        else{
-                                            true
-                                        }
-                                    if (removeChar) {
-                                        viewModelScope.launch {
-                                            isValidUserPhone.emit(false)
-                                        }
-                                        delay(300)
-                                        userPhone.value =
-                                            it.removeRange(i, i + 1)
-                                        isValidUserPhone.emit(false)
-                                    }
-                                }
-
-                                isValidUserPhone.emit(
-                                    mask.count { tmp-> tmp.toString()=="#" }
-                                            ==
-                                            userPhone.value.length
-                                )
-
-                                storeUserProfile()
-
-                            }
-                        }
-                        //endregion
-
-//                    }
-                }
-
-            }
-        }
-
-    }
 
     private fun storeUserProfile(){
 
@@ -427,10 +308,123 @@ class ScreenAuthViewModel:ViewModel(
         userProfile.phone=
             userPhone.value
 
-        mainPrefStorage.value
-            ?.setField(
+        mainPrefStorage.setField(
                 MainPrefStorage.Keys.UserProfile,
                 userProfile)
+
+    }
+
+    fun addMainPrefStorage(mainPrefStorage: MainPrefStorage) {
+        this@ScreenAuthViewModel.mainPrefStorage=mainPrefStorage
+        userProfile=
+            mainPrefStorage.getField<UserProfile>(MainPrefStorage.Keys.UserProfile)!!
+//                    if (userProfile.isValid)
+//                        enter()
+//                    else {
+        userFirstName.value = userProfile.firstName ?: ""
+        userLastName.value = userProfile.lastName ?: ""
+        userPhone.value = userProfile.phone ?: ""
+
+        //region first
+        viewModelScope.launch {
+            userFirstName.collect{
+                isValidUserFirstName.emit(true)
+                for ( i in it.indices) {
+                    if (!it[i].toString().contains(regexCyrillic)) {
+                        viewModelScope.launch {
+                            isValidUserFirstName.emit(false)
+                        }
+                        delay(300)
+                        userFirstName.value =
+                            it.removeRange(i, i + 1)
+                    }
+                }
+                userFirstName.value=
+                    userFirstName.value.replaceFirstChar {capitChar->
+                        if (capitChar.isLowerCase())
+                            capitChar.titlecase(
+                                Locale.getDefault())
+                        else
+                            capitChar.toString()
+                    }
+
+                storeUserProfile()
+
+            }
+        }
+        //endregion
+
+        //region last
+        viewModelScope.launch {
+            userLastName.collect{
+                isValidUserLastName.emit(true)
+                for ( i in it.indices) {
+                    if (!it[i].toString().contains(regexCyrillic)) {
+                        viewModelScope.launch {
+                            isValidUserLastName.emit(false)
+                        }
+                        delay(300)
+                        userLastName.value =
+                            it.removeRange(i, i + 1)
+                    }
+                }
+                userLastName.value=userLastName.value.replaceFirstChar {capitChar->
+                    if (capitChar.isLowerCase())
+                        capitChar.titlecase(
+                            Locale.getDefault())
+                    else
+                        capitChar.toString()
+                }
+
+                storeUserProfile()
+
+            }
+        }
+        //endregion
+
+        //region phone
+        viewModelScope.launch {
+            userPhone.collect{
+
+                for ( i in it.indices) {
+                    val currentChar=it[i]
+                    val removeChar =
+                        if (i<mask.count { tmp-> tmp.toString()=="#" }) {
+
+                            !currentChar
+                                .toString()
+                                .contains(regexPhone)
+                                    ||
+                                    (i == 0 && currentChar == mask[1])
+
+                        }
+                        else{
+                            true
+                        }
+                    if (removeChar) {
+                        viewModelScope.launch {
+                            isValidUserPhone.emit(false)
+                        }
+                        delay(300)
+                        userPhone.value =
+                            it.removeRange(i, i + 1)
+                        isValidUserPhone.emit(false)
+                    }
+                }
+
+                isValidUserPhone.emit(
+                    mask.count { tmp-> tmp.toString()=="#" }
+                            ==
+                            userPhone.value.length
+                )
+
+                storeUserProfile()
+
+            }
+        }
+        //endregion
+
+//                    }
 
     }
 }
@@ -446,8 +440,9 @@ fun ScreenAuthPreview(
             color = MaterialTheme.colorScheme.background
         ) {
 
+
             ScreenAuth(
-                mutableNavRouteState = MutableStateFlow(null),
+                navHostController = rememberNavController(),
                 mainPrefStorage = MainPrefStorage(LocalContext.current))
         }
     }
