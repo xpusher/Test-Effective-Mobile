@@ -69,7 +69,7 @@ fun ScreenCatalog(
                     .aspectRatio(1f)
                     .clickable {
                         navHostController.navigate(
-                            route = "${routes[3]}/$position"
+                            "ScreenCatalogItem/$position"
                         )
 
                     }) {
@@ -86,19 +86,24 @@ fun ScreenCatalog(
         },
         bottomBar = {
             BottomMenu()
-        }) { innerPadding ->
+        }
+    ) { innerPadding ->
+
         Box(
             modifier = Modifier.padding(innerPadding)
         ) {
 
             when{
-                mockyContent==null->
+                mockyContent==null
+                -> {
                     LoadingCatalog()
-                mockyContent.isEmpty()->{
+                }
+                mockyContent.isEmpty()
+                ->{
                     EmptyCatalog()
                 }
-                else->{
-
+                else
+                ->{
                     ShowCatalog()
                 }
             }

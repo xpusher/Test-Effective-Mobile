@@ -9,6 +9,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.NavHostController
 import com.testeffectivemobile.models.MockyContent
+import com.testeffectivemobile.models.UserProfile
 import com.testeffectivemobile.ui.errorUpdateMocky
 import com.testeffectivemobile.ui.routes
 import kotlinx.coroutines.Job
@@ -19,7 +20,8 @@ class MainViewModel(private val application: Application):
     AndroidViewModel(
         application
     ) {
-    fun addNavHostController(navHostController: NavHostController) {
+    fun addNavHostController(navHostController: NavHostController
+    ) {
 
         val onDestinationChangedListener=
             object : NavController.OnDestinationChangedListener{
@@ -32,7 +34,13 @@ class MainViewModel(private val application: Application):
                     when(destination.route)
                     {
                         routes[0]->{
-                            navHostController.navigate(route= routes[1])
+                            val isValidUserProfile=
+                                mainPrefStorage.getField<UserProfile>(MainPrefStorage.Keys.UserProfile)!!.isValid
+
+                            if (isValidUserProfile)
+                                navHostController.navigate(route= routes[2]){popUpTo(0)}
+                            else
+                                navHostController.navigate(route= routes[1]){popUpTo(0)}
                         }
                         routes[2]->{
 
@@ -65,7 +73,6 @@ class MainViewModel(private val application: Application):
         navHostController
             .addOnDestinationChangedListener(onDestinationChangedListener)
 
-
     }
 
     val mainDialog=
@@ -75,7 +82,8 @@ class MainViewModel(private val application: Application):
         MutableStateFlow<MockyContent?>(null)
 
     val mainPrefStorage=
-        MainPrefStorage(application)
+        MainPrefStorage(
+            application)
 
     val mainRepository=
         MainRepository(

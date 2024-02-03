@@ -315,15 +315,22 @@ class ScreenAuthViewModel:ViewModel(
     }
 
     fun addMainPrefStorage(mainPrefStorage: MainPrefStorage) {
-        this@ScreenAuthViewModel.mainPrefStorage=mainPrefStorage
+
+        this@ScreenAuthViewModel.mainPrefStorage=
+            mainPrefStorage
+
         userProfile=
-            mainPrefStorage.getField<UserProfile>(MainPrefStorage.Keys.UserProfile)!!
-//                    if (userProfile.isValid)
-//                        enter()
-//                    else {
-        userFirstName.value = userProfile.firstName ?: ""
-        userLastName.value = userProfile.lastName ?: ""
-        userPhone.value = userProfile.phone ?: ""
+            mainPrefStorage.getField<UserProfile>(
+                MainPrefStorage.Keys.UserProfile)!!
+
+        userFirstName.value =
+            userProfile.firstName ?: ""
+
+        userLastName.value =
+            userProfile.lastName ?: ""
+
+        userPhone.value =
+            userProfile.phone ?: ""
 
         //region first
         viewModelScope.launch {
@@ -423,8 +430,6 @@ class ScreenAuthViewModel:ViewModel(
             }
         }
         //endregion
-
-//                    }
 
     }
 }

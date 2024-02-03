@@ -48,7 +48,7 @@ val routes = listOf(
     "OnCreateNav",
     "ScreenAuth",
     "ScreenCatalog",
-    "ScreenCatalogItem{id}",
+    "ScreenCatalogItem/{id}",
 )
 
 @Composable
