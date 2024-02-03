@@ -2,6 +2,7 @@
 
 package com.testeffectivemobile.ui
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -11,8 +12,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
@@ -122,7 +126,22 @@ fun ScreenAuth(
                     colors = if (isValidFirstName)
                         TextFieldColorsColorsValid()
                     else
-                        TextFieldColorsColorsInValid()
+                        TextFieldColorsColorsInValid(),
+                    trailingIcon = {
+                        if (firstName.isNotEmpty()) {
+                            Icon(
+                                Icons.Default.Clear,
+                                contentDescription = "clear text",
+                                modifier = Modifier
+                                    .clickable {
+                                        rememberCoroutineScope.launch {
+                                            screenAuthViewModel.userFirstName.emit("")
+                                        }
+                                    },
+
+                                )
+                        }
+                    }
                 )
 
             }
@@ -142,7 +161,22 @@ fun ScreenAuth(
                     colors = if (isValidLastName)
                         TextFieldColorsColorsValid()
                     else
-                        TextFieldColorsColorsInValid()
+                        TextFieldColorsColorsInValid(),
+                    trailingIcon = {
+                        if (lastName.isNotEmpty()) {
+                            Icon(
+                                Icons.Default.Clear,
+                                contentDescription = "clear text",
+                                modifier = Modifier
+                                    .clickable {
+                                        rememberCoroutineScope.launch {
+                                            screenAuthViewModel.userLastName.emit("")
+                                        }
+                                    },
+
+                                )
+                        }
+                    }
                 )
 
             }
@@ -168,7 +202,22 @@ fun ScreenAuth(
                     placeholder = { Text(text = screenAuthViewModel.mask, color = Color.LightGray)},
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Phone),
-                    visualTransformation = MaskVisualTransformation(screenAuthViewModel.mask)
+                    visualTransformation = MaskVisualTransformation(screenAuthViewModel.mask),
+                    trailingIcon = {
+                        if (phone.isNotEmpty()) {
+                            Icon(
+                                Icons.Default.Clear,
+                                contentDescription = "clear text",
+                                modifier = Modifier
+                                    .clickable {
+                                        rememberCoroutineScope.launch {
+                                            screenAuthViewModel.userPhone.emit("")
+                                        }
+                                    },
+
+                                )
+                        }
+                    }
                 )
 
             }
