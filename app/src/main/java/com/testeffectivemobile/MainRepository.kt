@@ -43,8 +43,7 @@ class MainRepository(
                         newMockyContent
                     )
 
-                    if (!oldMockyContent.isEmpty())
-                        mutableMockyContent.emit(newMockyContent)
+                    mutableMockyContent.emit(newMockyContent)
 
                 }
 

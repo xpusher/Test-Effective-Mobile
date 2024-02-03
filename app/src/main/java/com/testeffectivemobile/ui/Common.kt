@@ -110,7 +110,8 @@ class MaskVisualTransformation(private val mask: String) : VisualTransformation 
         }
     }
 }
-val mockyContentString="{\n" +
+val mockyContentString:String
+    get() = "{\n" +
         "  \"items\": [\n" +
         "    {\n" +
         "      \"id\": \"cbf0c984-7c6c-4ada-82da-e29dc698bb50\",\n" +

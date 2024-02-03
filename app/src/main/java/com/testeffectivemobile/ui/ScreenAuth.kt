@@ -304,9 +304,9 @@ class ScreenAuthViewModel:ViewModel(
                 mainPrefStorage?.let {
                     userProfile=
                         it.getField<UserProfile>(MainPrefStorage.Keys.UserProfile)!!
-                    if (userProfile.isValid)
-                        enter()
-                    else {
+//                    if (userProfile.isValid)
+//                        enter()
+//                    else {
                         userFirstName.value = userProfile.firstName ?: ""
                         userLastName.value = userProfile.lastName ?: ""
                         userPhone.value = userProfile.phone ?: ""
@@ -410,7 +410,7 @@ class ScreenAuthViewModel:ViewModel(
                         }
                         //endregion
 
-                    }
+//                    }
                 }
 
             }
