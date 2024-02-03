@@ -26,6 +26,7 @@ import androidx.compose.ui.text.input.OffsetMapping
 import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.testeffectivemobile.R
@@ -36,8 +37,10 @@ val routes = listOf(
     "ScreenAuth",
     "ScreenMain",
     "ScreenCatalog",
+    "ScreenBasket",
+    "ScreenStock",
+    "ScreenProfile",
     "ScreenCatalogItem/{id}",
-    "ScreenBasket"
 )
 
 @Composable
@@ -45,6 +48,7 @@ fun BottomMenu(navHostController: NavHostController) {
     BottomNavigation(
         backgroundColor = MaterialTheme.colorScheme.background
     ) {
+
         routes.forEach {
 
             val selected=
@@ -57,6 +61,18 @@ fun BottomMenu(navHostController: NavHostController) {
                     Color.Red
                 else
                     Color.LightGray
+
+            @Composable
+            fun CreateLabel(stringTitle:String){
+                Text(
+                    text = stringTitle,
+                    color=color,
+                    fontSize = 12.sp,
+                    lineHeight = 12.sp
+                )
+
+            }
+
             when(it){
                 routes[routes.indexOf("ScreenCatalog")]->{
                     BottomNavigationItem(
@@ -71,10 +87,7 @@ fun BottomMenu(navHostController: NavHostController) {
                             navHostController.navigate(it){popUpTo(0)}
                         },
                         label = {
-                            Text(
-                                text = stringResource(id = R.string.screen_catalog_title),
-                                color=color
-                            )
+                            CreateLabel(stringResource(id = R.string.screen_catalog_title))
                         },
                         selected = selected,
                     )
@@ -93,10 +106,64 @@ fun BottomMenu(navHostController: NavHostController) {
                             navHostController.navigate(it){popUpTo(0)}
                         },
                         label = {
-                            Text(
-                                text = stringResource(id = R.string.screen_main_title),
-                                color=color
+                            CreateLabel(stringResource(id = R.string.screen_main_title))
+                        },
+                        selected = selected,
+                    )
+
+                }
+                routes[routes.indexOf("ScreenBasket")]->{
+                    BottomNavigationItem(
+                        icon = {
+                            Image(
+                                painter = painterResource(id = R.drawable.ic_bottom_menu_basket),
+                                contentDescription = null,
+                                colorFilter = ColorFilter.tint(color)
                             )
+                        },
+                        onClick = {
+                            navHostController.navigate(it){popUpTo(0)}
+                        },
+                        label = {
+                            CreateLabel(stringResource(id = R.string.screen_basket_title))
+                        },
+                        selected = selected,
+                    )
+
+                }
+                routes[routes.indexOf("ScreenStock")]->{
+                    BottomNavigationItem(
+                        icon = {
+                            Image(
+                                painter = painterResource(id = R.drawable.ic_bottom_menu_stock),
+                                contentDescription = null,
+                                colorFilter = ColorFilter.tint(color)
+                            )
+                        },
+                        onClick = {
+                            navHostController.navigate(it){popUpTo(0)}
+                        },
+                        label = {
+                            CreateLabel(stringResource(id = R.string.screen_stock_title))
+                        },
+                        selected = selected,
+                    )
+
+                }
+                routes[routes.indexOf("ScreenProfile")]->{
+                    BottomNavigationItem(
+                        icon = {
+                            Image(
+                                painter = painterResource(id = R.drawable.ic_bottom_menu_profile),
+                                contentDescription = null,
+                                colorFilter = ColorFilter.tint(color)
+                            )
+                        },
+                        onClick = {
+                            navHostController.navigate(it){popUpTo(0)}
+                        },
+                        label = {
+                            CreateLabel(stringResource(id = R.string.screen_profil_title))
                         },
                         selected = selected,
                     )

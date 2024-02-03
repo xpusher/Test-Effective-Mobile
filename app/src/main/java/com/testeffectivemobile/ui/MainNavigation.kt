@@ -37,7 +37,7 @@ fun MainNavigation(
                 when (destination
                 ) {
                     routes[routes.indexOf("OnCreateNav")]
-                            ->{
+                    ->{
                                 onCreateNav.invoke()
                             }
                     routes[routes.indexOf("ScreenAuth")]
@@ -66,6 +66,14 @@ fun MainNavigation(
                     routes[routes.indexOf("ScreenBasket")]
                     ->{
                         ScreenBasket(navHostController=navHostController)
+                    }
+                    routes[routes.indexOf("ScreenStock")]
+                    ->{
+                        ScreenStock(navHostController=navHostController)
+                    }
+                    routes[routes.indexOf("ScreenProfile")]
+                    ->{
+                        ScreenProfile(navHostController=navHostController)
                     }
 
                 }

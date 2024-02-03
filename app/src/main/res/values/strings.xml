@@ -14,4 +14,6 @@
     <string name="common_undeconstraction">undeconstraction</string>
     <string name="screen_main_title">Главная</string>
     <string name="screen_basket_title">Корзина</string>
+    <string name="screen_stock_title">Акции</string>
+    <string name="screen_profil_title">Личный\nкабинет</string>
 </resources>
