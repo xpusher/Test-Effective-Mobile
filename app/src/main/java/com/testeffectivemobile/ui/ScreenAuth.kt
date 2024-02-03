@@ -273,7 +273,7 @@ class ScreenAuthViewModel:ViewModel(
     lateinit var mainPrefStorage:MainPrefStorage
     fun enter() {
         navHostController.navigate(
-            route= routes[2]
+            route= routes[routes.indexOf("ScreenCatalog")]
         ){
             popUpTo(0)
         }

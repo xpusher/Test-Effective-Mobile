@@ -33,16 +33,16 @@ class MainViewModel(private val application: Application):
 
                     when(destination.route)
                     {
-                        routes[0]->{
+                        routes[routes.indexOf("OnCreateNav")]->{
                             val isValidUserProfile=
                                 mainPrefStorage.getField<UserProfile>(MainPrefStorage.Keys.UserProfile)!!.isValid
 
                             if (isValidUserProfile)
-                                navHostController.navigate(route= routes[2]){popUpTo(0)}
+                                navHostController.navigate(route= routes[routes.indexOf("ScreenMain")]){popUpTo(0)}
                             else
-                                navHostController.navigate(route= routes[1]){popUpTo(0)}
+                                navHostController.navigate(route= routes[routes.indexOf("ScreenAuth")]){popUpTo(0)}
                         }
-                        routes[2]->{
+                        routes[routes.indexOf("ScreenCatalog")]->{
 
                             viewModelScope.launch {
 

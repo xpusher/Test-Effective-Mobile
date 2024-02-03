@@ -28,7 +28,7 @@ fun MainNavigation(
 
     NavHost(
         navController = navHostController,
-        startDestination = routes[0]
+        startDestination = routes[routes.indexOf("OnCreateNav")]
     ) {
 
         routes.forEach { destination ->
@@ -36,29 +36,38 @@ fun MainNavigation(
             {
                 when (destination
                 ) {
-                    routes[0]
+                    routes[routes.indexOf("OnCreateNav")]
                             ->{
                                 onCreateNav.invoke()
                             }
-                    routes[1]
+                    routes[routes.indexOf("ScreenAuth")]
                     ->{
                         ScreenAuth(
                             navHostController=navHostController,
                             mainPrefStorage = mainPrefStorage)
                     }
-                    routes[2]
+                    routes[routes.indexOf("ScreenCatalog")]
                     ->{
                         ScreenCatalog(
                             navHostController=navHostController,
                             mutableMockyContent)
                     }
-                    routes[3]
+                    routes[routes.indexOf("ScreenCatalogItem/{id}")]
                     ->{
 
                         ScreenCatalogItem(
                             id=it.arguments!!.getString("id")!!,
                             mutableMockyContent=mutableMockyContent)
                     }
+                    routes[routes.indexOf("ScreenMain")]
+                    ->{
+                        ScreenMain(navHostController=navHostController)
+                    }
+                    routes[routes.indexOf("ScreenBasket")]
+                    ->{
+                        ScreenBasket(navHostController=navHostController)
+                    }
+
                 }
             }
         }

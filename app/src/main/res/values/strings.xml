@@ -11,4 +11,7 @@
     <string name="screen_auth_label_last_name">Фамилия</string>
     <string name="screen_auth_label_phone">Номер телефона</string>
     <string name="screen_auth_footer">Нажимая кнопку \"Войти\", Вы принимаете /n условия программы конфедициальности</string>
+    <string name="common_undeconstraction">undeconstraction</string>
+    <string name="screen_main_title">Главная</string>
+    <string name="screen_basket_title">Корзина</string>
 </resources>

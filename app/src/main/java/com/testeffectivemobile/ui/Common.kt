@@ -2,54 +2,123 @@
 
 package com.testeffectivemobile.ui
 
+import androidx.compose.foundation.Image
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldColors
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.OffsetMapping
 import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.testeffectivemobile.R
 import kotlin.math.absoluteValue
-
-@Composable
-fun BottomMenu(){
-    BottomNavigation(
-        backgroundColor = MaterialTheme.colorScheme.background
-    ) {
-        routes.forEach {
-            BottomNavigationItem(
-                icon = { Icon(Icons.Filled.Favorite,
-                    contentDescription = null,) },
-                onClick = {},
-                label = { Text(text = "xcxcxcx")},
-                selected = true
-            )
-        }
-    }
-}
 
 val routes = listOf(
     "OnCreateNav",
     "ScreenAuth",
+    "ScreenMain",
     "ScreenCatalog",
     "ScreenCatalogItem/{id}",
+    "ScreenBasket"
 )
+
+@Composable
+fun BottomMenu(navHostController: NavHostController) {
+    BottomNavigation(
+        backgroundColor = MaterialTheme.colorScheme.background
+    ) {
+        routes.forEach {
+
+            val selected=
+                navHostController.currentBackStackEntry?.destination?.route?.startsWith(
+                    it.split("/")[0]
+                )?:false
+
+            val color=
+                if (selected)
+                    Color.Red
+                else
+                    Color.LightGray
+            when(it){
+                routes[routes.indexOf("ScreenCatalog")]->{
+                    BottomNavigationItem(
+                        icon = {
+                            Image(
+                                painter = painterResource(id = R.drawable.ic_bottom_menu_catalog),
+                                contentDescription = null,
+                                colorFilter = ColorFilter.tint(color)
+                            )
+                        },
+                        onClick = {
+                            navHostController.navigate(it){popUpTo(0)}
+                        },
+                        label = {
+                            Text(
+                                text = stringResource(id = R.string.screen_catalog_title),
+                                color=color
+                            )
+                        },
+                        selected = selected,
+                    )
+
+                }
+                routes[routes.indexOf("ScreenMain")]->{
+                    BottomNavigationItem(
+                        icon = {
+                            Image(
+                                painter = painterResource(id = R.drawable.ic_bottom_menu_main),
+                                contentDescription = null,
+                                colorFilter = ColorFilter.tint(color)
+                            )
+                        },
+                        onClick = {
+                            navHostController.navigate(it){popUpTo(0)}
+                        },
+                        label = {
+                            Text(
+                                text = stringResource(id = R.string.screen_main_title),
+                                color=color
+                            )
+                        },
+                        selected = selected,
+                    )
+
+                }
+            }
+
+        }
+    }
+}
+@OptIn(ExperimentalMaterial3Api::class)
+@Preview(showBackground = true)
+@Composable
+fun BottomMenuPreview(
+) {
+    BottomMenu(rememberNavController())
+}
+
+@Composable
+fun UnderConstruction(){
+    Text(text = stringResource(id = R.string.common_undeconstraction))
+}
 
 @Composable
 fun textFieldColorsColorsValid(): TextFieldColors
