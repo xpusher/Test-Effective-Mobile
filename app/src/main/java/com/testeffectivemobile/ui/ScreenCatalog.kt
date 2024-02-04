@@ -98,6 +98,7 @@ fun ScreenCatalog(
                     items(count = mockyContent!!.items.length()) {position->
                         Card(modifier = Modifier
                             .padding(3.dp)
+                            .aspectRatio(168f/287f)
                             .clickable {
                                 navHostController.navigate(
                                     "ScreenCatalogItem/$position")

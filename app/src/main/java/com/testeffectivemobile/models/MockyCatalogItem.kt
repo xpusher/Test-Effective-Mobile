@@ -106,7 +106,7 @@ class MockyCatalogItem(stringJSONObject: String?=null):JSONObject(
     ){
         Column(
             modifier = Modifier
-                .aspectRatio(168f/287f)
+
 
         ) {
             //region header
