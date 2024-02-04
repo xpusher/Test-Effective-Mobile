@@ -97,7 +97,7 @@ fun ScreenCatalog(
                                 )
 
                             }) {
-                            Text(text = mockyContent.item(position).description)
+                            mockyContent.item(position).ComposableMockyCatalogItem()
                         }
                     }
                 }
