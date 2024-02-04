@@ -3,7 +3,7 @@ package com.testeffectivemobile.models
 import org.json.JSONArray
 import org.json.JSONObject
 
-class MockyContentItem(stringJSONObject: String?=null):JSONObject(
+class MockyCatalogItem(stringJSONObject: String?=null):JSONObject(
     if (stringJSONObject==null)
         JSONObject().toString()
     else

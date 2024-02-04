@@ -29,7 +29,7 @@ class MainActivity : ComponentActivity() {
 
                     MainNavigation(
                         navHostController,
-                        mainViewModel.mutableMockyContent,
+                        mainViewModel.mutableMockyCatalog,
                         mainViewModel.mainPrefStorage
                     ){
 

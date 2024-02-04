@@ -1,7 +1,8 @@
 package com.testeffectivemobile
 
 import android.content.Context
-import com.testeffectivemobile.models.MockyContent
+import com.testeffectivemobile.models.MockyCatalog
+import com.testeffectivemobile.models.MockyCatalogSorting
 import com.testeffectivemobile.models.UserProfile
 import org.json.JSONObject
 import kotlin.reflect.full.isSubclassOf
@@ -36,7 +37,8 @@ class MainPrefStorage(private val context: Context) :
 
             @JvmStatic fun values() = map.values.toTypedArray()
         }
-        data object ContentMocky : Keys(belongsToPref = true, defaultValue = MockyContent())
+        data object ContentMocky : Keys(belongsToPref = true, defaultValue = MockyCatalog())
+        data object ContentMockySorting : Keys(belongsToPref = true, defaultValue = MockyCatalogSorting.Default)
         data object UserProfile : Keys(belongsToPref = true, defaultValue = UserProfile())
     }
     @Suppress("UNCHECKED_CAST")
@@ -94,11 +96,16 @@ class MainPrefStorage(private val context: Context) :
     init {
         if (has(Keys.ContentMocky::class.java.simpleName))
         {
-            setField(Keys.ContentMocky, MockyContent(getString(Keys.ContentMocky::class.java.simpleName)))
+            setField(Keys.ContentMocky, MockyCatalog(getString(Keys.ContentMocky::class.java.simpleName)))
         }
         if (has(Keys.UserProfile::class.java.simpleName))
         {
             setField(Keys.UserProfile, UserProfile(getString(Keys.UserProfile::class.java.simpleName)))
+        }
+        if (has(Keys.ContentMockySorting::class.java.simpleName)) {
+            setField(
+                Keys.ContentMockySorting,
+                MockyCatalogSorting.valueOf(getString(Keys.ContentMockySorting::class.java.simpleName)))
         }
     }
 }

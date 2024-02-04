@@ -13,7 +13,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.testeffectivemobile.MainPrefStorage
-import com.testeffectivemobile.models.MockyContent
+import com.testeffectivemobile.models.MockyCatalog
 import com.testeffectivemobile.ui.theme.TestEffectiveMobileTheme
 import kotlinx.coroutines.flow.MutableStateFlow
 
@@ -21,7 +21,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 @Composable
 fun MainNavigation(
     navHostController: NavHostController,
-    mutableMockyContent: MutableStateFlow<MockyContent?>,
+    mutableMockyCatalog: MutableStateFlow<MockyCatalog?>,
     mainPrefStorage: MainPrefStorage,
     onCreateNav:()->Unit
 ) {
@@ -50,14 +50,14 @@ fun MainNavigation(
                     ->{
                         ScreenCatalog(
                             navHostController=navHostController,
-                            mutableMockyContent)
+                            mutableMockyCatalog)
                     }
                     routes[routes.indexOf("ScreenCatalogItem/{id}")]
                     ->{
 
                         ScreenCatalogItem(
                             id=it.arguments!!.getString("id")!!,
-                            mutableMockyContent=mutableMockyContent)
+                            mutableMockyCatalog=mutableMockyCatalog)
                     }
                     routes[routes.indexOf("ScreenMain")]
                     ->{
@@ -96,7 +96,7 @@ fun GreetingPreview() {
 
                 MainNavigation(
                     rememberNavController(),
-                    MutableStateFlow(MockyContent()),
+                    MutableStateFlow(MockyCatalog()),
                     MainPrefStorage(LocalContext.current)
                 ){}
             }

@@ -27,7 +27,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.testeffectivemobile.R
-import com.testeffectivemobile.models.MockyContent
+import com.testeffectivemobile.models.MockyCatalog
 import com.testeffectivemobile.ui.theme.TestEffectiveMobileTheme
 import kotlinx.coroutines.flow.MutableStateFlow
 
@@ -35,11 +35,11 @@ import kotlinx.coroutines.flow.MutableStateFlow
 @Composable
 fun ScreenCatalog(
     navHostController: NavHostController,
-    mutableMockyContent: MutableStateFlow<MockyContent?>
+    mutableMockyCatalog: MutableStateFlow<MockyCatalog?>
 ) {
 
     val mockyContent=
-        mutableMockyContent.collectAsStateWithLifecycle().value
+        mutableMockyCatalog.collectAsStateWithLifecycle().value
 
     @Composable
     fun EmptyCatalog(){
@@ -150,10 +150,10 @@ fun ScreenCatalogPreview(
 
 //            ScreenCatalog(
 //                MutableStateFlow(null),
-//                MutableStateFlow(MockyContent()))
+//                MutableStateFlow(MockyCatalog()))
             ScreenCatalog(
                 rememberNavController(),
-                MutableStateFlow(MockyContent(mockyContentString)))
+                MutableStateFlow(MockyCatalog(mockyContentString)))
         }
     }
 }

@@ -8,11 +8,10 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.NavHostController
-import com.testeffectivemobile.models.MockyContent
+import com.testeffectivemobile.models.MockyCatalog
+import com.testeffectivemobile.models.MockyCatalogSorting
 import com.testeffectivemobile.models.UserProfile
-import com.testeffectivemobile.ui.errorUpdateMocky
 import com.testeffectivemobile.ui.routes
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
@@ -44,21 +43,15 @@ class MainViewModel(private val application: Application):
                         }
                         routes[routes.indexOf("ScreenCatalog")]->{
 
+
                             viewModelScope.launch {
-
-                                try {
-
-                                    mainRepository
-                                        .updateMockyContent(mutableMockyContent)
-
-                                }catch (e:Exception){
-
-                                    mainDialog.emit(
-                                        errorUpdateMocky(mainDialog)
-                                    )
-
-                                }
-
+                                mainRepository.startMockyCatalogSortingJob(
+                                    mutableMockyCatalog,
+                                    mutableMockyCatalogSorting,
+                                    mainRepository,
+                                    mainDialog,
+                                    mainPrefStorage
+                                )
                             }
 
                             navHostController.removeOnDestinationChangedListener(this)
@@ -75,11 +68,6 @@ class MainViewModel(private val application: Application):
 
     }
 
-    val mainDialog=
-        MutableStateFlow<(@Composable ()->Unit)?>(null)
-
-    val mutableMockyContent=
-        MutableStateFlow<MockyContent?>(null)
 
     val mainPrefStorage=
         MainPrefStorage(
@@ -89,6 +77,17 @@ class MainViewModel(private val application: Application):
         MainRepository(
             mainPrefStorage,
             application)
+
+    val mainDialog=
+        MutableStateFlow<(@Composable ()->Unit)?>(null)
+
+    val mutableMockyCatalog=
+        MutableStateFlow<MockyCatalog?>(null)
+
+    val mutableMockyCatalogSorting=
+        MutableStateFlow(
+            mainPrefStorage.getField<MockyCatalogSorting>(
+                MainPrefStorage.Keys.ContentMockySorting)!!)
 
 
 }

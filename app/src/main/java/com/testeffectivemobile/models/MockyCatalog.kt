@@ -1,0 +1,47 @@
+package com.testeffectivemobile.models
+
+import com.testeffectivemobile.MainPrefStorage
+import org.json.JSONArray
+import org.json.JSONObject
+import kotlin.reflect.full.isSubclassOf
+
+class MockyCatalog(jsonString: String?=null):
+    JSONObject(jsonString?:JSONObject().toString()
+    ) {
+    fun isEmpty(): Boolean {
+        return !keys().hasNext()
+    }
+
+    fun isEqualContent(mockyCatalog: MockyCatalog):Boolean {
+        return toString()==mockyCatalog.toString()
+    }
+    val items
+        get() =if (has("items")) this@MockyCatalog.getJSONArray("items") else JSONArray()
+    fun item(position:Int):MockyCatalogItem{
+        return items.get(position) as MockyCatalogItem
+    }
+
+    init {
+        for (i in 0 until  items.length())
+            items.put(i,MockyCatalogItem(items.getString(i)))
+    }
+}
+
+sealed class  MockyCatalogSorting{
+    companion object {
+
+        @JvmStatic private val map
+            get() = MockyCatalogSorting::class.nestedClasses
+                .filter { klass -> klass.isSubclassOf(MockyCatalogSorting::class) }
+                .map { klass -> klass.objectInstance }
+                .filterIsInstance<MockyCatalogSorting>()
+                .associateBy { value -> value::class.java.simpleName }
+
+        @JvmStatic fun valueOf(value: String) = requireNotNull(map[value]) {
+            "${MockyCatalogSorting::class.java.name}.$value"
+        }
+
+        @JvmStatic fun values() = map.values.toTypedArray()
+    }
+    data object Default:MockyCatalogSorting()
+}
