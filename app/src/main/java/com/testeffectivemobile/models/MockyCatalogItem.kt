@@ -81,6 +81,7 @@ class MockyCatalogItem(stringJSONObject: String?=null):JSONObject(
 
     val available:Int
         get() = getInt("available")
+
     val description:String
         get() = getString("description")
 
@@ -101,13 +102,43 @@ class MockyCatalogItem(stringJSONObject: String?=null):JSONObject(
     val ingredients:String
         get() = getString("ingredients")
 
+    val imgHardCode:JSONArray
+        get() = JSONArray()
+            .apply {
+                when(id){
+                    "cbf0c984-7c6c-4ada-82da-e29dc698bb50"->{
+                        put(R.drawable.img_5)
+                        put(R.drawable.img_4)
+                        put(R.drawable.img_1)
+                        put(R.drawable.img_2)
+                    }
+                    "54a876a5-2205-48ba-9498-cfecff4baa6e"->{
+                        put(R.drawable.img_0)
+                        put(R.drawable.img_1)
+                        put(R.drawable.img_5)
+                        put(R.drawable.img_0)
+                    }
+                    "75c84407-52e1-4cce-a73a-ff2d3ac031b3"->{
+                        put(R.drawable.img_4)
+                        put(R.drawable.img_5)
+                        put(R.drawable.img_3)
+                        put(R.drawable.img_2)
+                    }
+                    "16f88865-ae74-4b7c-9d85-b68334bb97db"->{
+                        put(R.drawable.img_2)
+                        put(R.drawable.img_3)
+                        put(R.drawable.img_0)
+                        put(R.drawable.img_4)
+                    }
+
+                    else->throw Exception()
+                }
+            }
     @Composable
     fun ComposableMockyCatalogItem(
     ){
         Column(
             modifier = Modifier
-
-
         ) {
             //region header
             Row(
@@ -124,8 +155,9 @@ class MockyCatalogItem(stringJSONObject: String?=null):JSONObject(
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(
-                        text ="to do Image")
+                    Image(
+                        painter = painterResource(id = imgHardCode.getInt(0)),
+                        contentDescription = null)
                 }
                 Column(
                     modifier = Modifier.weight(1f),
@@ -159,7 +191,6 @@ class MockyCatalogItem(stringJSONObject: String?=null):JSONObject(
                 ,
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
-
             ) {
 
                 Column(
@@ -232,13 +263,13 @@ class MockyCatalogItem(stringJSONObject: String?=null):JSONObject(
                         Row(
                             modifier = Modifier
                                 .fillMaxSize()
-                                ,
+                            ,
                             horizontalArrangement = Arrangement.End,
                             verticalAlignment = Alignment.Bottom
                         ) {
 
-                        Image(painter = painterResource(id = R.drawable.ic_plus),
-                            contentDescription = null)
+                            Image(painter = painterResource(id = R.drawable.ic_plus),
+                                contentDescription = null)
                         }
                     }
 
@@ -247,6 +278,7 @@ class MockyCatalogItem(stringJSONObject: String?=null):JSONObject(
             //endregion
         }
     }
+
 }
 
 @Preview(showBackground = true)
