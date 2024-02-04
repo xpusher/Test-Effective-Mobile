@@ -1,13 +1,16 @@
 package com.testeffectivemobile.models
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
@@ -99,16 +102,17 @@ class MockyCatalogItem(stringJSONObject: String?=null):JSONObject(
         get() = getString("ingredients")
 
     @Composable
-    fun ComposableMockyCatalogItem(){
+    fun ComposableMockyCatalogItem(
+    ){
         Column(
             modifier = Modifier
-                .aspectRatio(0.75f)
+                .aspectRatio(168f/287f)
 
         ) {
             //region header
             Row(
                 modifier = Modifier
-                    .weight(2f)
+                    .aspectRatio(1.1f)
 
             ) {
 
@@ -135,7 +139,9 @@ class MockyCatalogItem(stringJSONObject: String?=null):JSONObject(
                         horizontalArrangement = Arrangement.Center
 
                     ) {
-                        Icon( Icons.Default.Favorite, contentDescription = null)
+                        Image(
+                            painter = painterResource(id = R.drawable.ic_unfavorite),
+                            contentDescription = null)
                     }
                     Row(
                         modifier = Modifier.weight(3f)
@@ -149,7 +155,6 @@ class MockyCatalogItem(stringJSONObject: String?=null):JSONObject(
             //region footer
             Row(
                 modifier = Modifier
-                    .weight(1f)
                     .fillMaxSize()
                 ,
                 horizontalArrangement = Arrangement.Center,
@@ -194,35 +199,53 @@ class MockyCatalogItem(stringJSONObject: String?=null):JSONObject(
                         }
                     }
                     //endregion
+                    //region title
                     Text(
                         text = title,
                         style = TextStyle(fontWeight = FontWeight.Bold)
                     )
+                    //endregion
+                    //region subtitle
                     Text(
+                        modifier = Modifier,
                         text = subtitle,
-                        fontSize = 10.sp
+                        fontSize = 10.sp,
+                        lineHeight = 11.sp
                     )
+                    //endregion
                     Row(
-                        verticalAlignment = Alignment.CenterVertically
+                        modifier = Modifier.weight(1f),
+                        verticalAlignment = Alignment.Bottom
                     ) {
-                        Image(
-                            painter = painterResource(id = R.drawable.ic_rating),
-                            contentDescription = null)
+                        Row(modifier = Modifier,
+                            verticalAlignment = Alignment.CenterVertically) {
+                            Image(
+                                painter = painterResource(id = R.drawable.ic_rating),
+                                contentDescription = null)
 
-                        Text(
-                            text = feedbackRating,
-                            fontSize = 10.sp,
-                            style = TextStyle(color = colorResource(id = R.color.rate_color))
-                        )
+                            Text(
+                                text = feedbackRating,
+                                fontSize = 10.sp,
+                                style = TextStyle(color = colorResource(id = R.color.rate_color))
+                            )
+                        }
+                        Row(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                ,
+                            horizontalArrangement = Arrangement.End,
+                            verticalAlignment = Alignment.Bottom
+                        ) {
+
+                        Image(painter = painterResource(id = R.drawable.ic_plus),
+                            contentDescription = null)
+                        }
                     }
 
                 }
             }
             //endregion
-
-
         }
-
     }
 }
 
