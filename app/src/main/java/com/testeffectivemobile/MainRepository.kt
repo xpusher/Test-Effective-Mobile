@@ -15,15 +15,7 @@ class MainRepository(
     private val mainPrefStorage: MainPrefStorage,
     private val application: Application
 ) {
-    suspend fun updateMockyContent(mutableMockyCatalog: MutableStateFlow<MockyCatalog?>
-    ) {
-
-        val oldMockyCatalog=
-            mainPrefStorage.getField<MockyCatalog>(
-                MainPrefStorage.Keys.ContentMocky)!!
-
-        if (!oldMockyCatalog.isEmpty())
-            mutableMockyCatalog.emit(oldMockyCatalog)
+    suspend fun requestMockyContent(): MockyCatalog? {
 
         HttpClient().use {
 
@@ -37,24 +29,7 @@ class MainRepository(
                     else->null
                 }
 
-            if (newMockyCatalog is JSONObject) {
-
-                if (!oldMockyCatalog.isEqualContent(newMockyCatalog)) {
-
-                    mainPrefStorage.setField(
-                        MainPrefStorage.Keys.ContentMocky,
-                        newMockyCatalog
-                    )
-
-                    mutableMockyCatalog.emit(newMockyCatalog)
-
-                }
-
-            }
-            else {
-                mutableMockyCatalog.emit(MockyCatalog())
-                throw Exception()
-            }
+            return newMockyCatalog
 
         }
 
@@ -65,21 +40,38 @@ class MainRepository(
         mutableMockyCatalogSorting: MutableStateFlow<MockyCatalogSorting>,
         mainRepository: MainRepository,
         mainDialog: MutableStateFlow<@Composable() (() -> Unit)?>,
-        mainPrefStorage: MainPrefStorage
     ) {
+
+        suspend fun setSorting(contentMockySorting: MockyCatalogSorting) {
+
+            val newMockyCatalog=
+                mainRepository.requestMockyContent()
+
+            if (newMockyCatalog is MockyCatalog) {
+
+                newMockyCatalog
+                    .setSorting(contentMockySorting)
+
+                mutableMockyCatalog
+                    .emit(newMockyCatalog)
+
+            }
+            else {
+                mutableMockyCatalog.emit(MockyCatalog())
+                throw Exception()
+            }
+
+        }
 
         mutableMockyCatalogSorting.collect{contentMockySorting->
 
-
             mainPrefStorage.setField(
                 MainPrefStorage.Keys.ContentMockySorting,
-                contentMockySorting
-            )
+                contentMockySorting)
 
             try {
 
-                mainRepository
-                    .updateMockyContent(mutableMockyCatalog)
+                setSorting(contentMockySorting)
 
             }catch (e:Exception){
 

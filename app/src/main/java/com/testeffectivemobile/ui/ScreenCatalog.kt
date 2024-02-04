@@ -28,6 +28,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.testeffectivemobile.R
 import com.testeffectivemobile.models.MockyCatalog
+import com.testeffectivemobile.models.MockyCatalogSorting
 import com.testeffectivemobile.ui.theme.TestEffectiveMobileTheme
 import kotlinx.coroutines.flow.MutableStateFlow
 
@@ -35,7 +36,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 @Composable
 fun ScreenCatalog(
     navHostController: NavHostController,
-    mutableMockyCatalog: MutableStateFlow<MockyCatalog?>
+    mutableMockyCatalog: MutableStateFlow<MockyCatalog?>,
+    mutableMockyCatalogSorting: MutableStateFlow<MockyCatalogSorting>
 ) {
 
     val mockyContent=
@@ -67,7 +69,7 @@ fun ScreenCatalog(
         Column {
             Row(modifier = Modifier.fillMaxWidth()) {
                 Row(modifier = Modifier.weight(1f)) {
-                    DropdownRateCatalog()
+                    DropdownRateCatalog(mutableMockyCatalogSorting)
                 }
                 Row(modifier = Modifier.weight(1f),
                     horizontalArrangement = Arrangement.End) {
@@ -153,7 +155,9 @@ fun ScreenCatalogPreview(
 //                MutableStateFlow(MockyCatalog()))
             ScreenCatalog(
                 rememberNavController(),
-                MutableStateFlow(MockyCatalog(mockyContentString)))
+                MutableStateFlow(MockyCatalog(mockyContentString)),
+                MutableStateFlow(MockyCatalogSorting.Default)
+            )
         }
     }
 }

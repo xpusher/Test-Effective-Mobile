@@ -30,7 +30,8 @@ class MainActivity : ComponentActivity() {
                     MainNavigation(
                         navHostController,
                         mainViewModel.mutableMockyCatalog,
-                        mainViewModel.mainPrefStorage
+                        mainViewModel.mainPrefStorage,
+                        mainViewModel.mutableMockyCatalogSorting
                     ){
 
                         mainViewModel

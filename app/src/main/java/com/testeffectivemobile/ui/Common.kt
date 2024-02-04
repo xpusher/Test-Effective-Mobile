@@ -3,7 +3,6 @@
 package com.testeffectivemobile.ui
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -32,6 +31,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -51,6 +51,9 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.testeffectivemobile.R
+import com.testeffectivemobile.models.MockyCatalogSorting
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
 import kotlin.math.absoluteValue
 
 
@@ -206,14 +209,24 @@ fun BottomMenuPreview(
 }
 
 @Composable
-fun DropdownRateCatalog(
-) {
+fun DropdownRateCatalog(mutableMockyCatalogSorting: MutableStateFlow<MockyCatalogSorting>) {
+
+    val rememberCoroutineScope=
+        rememberCoroutineScope()
+
     var expanded by remember { mutableStateOf(false) }
+
     val items = listOf(
         stringResource(id = R.string.rate_catalog_0),
         stringResource(id = R.string.rate_catalog_1),
         stringResource(id = R.string.rate_catalog_3))
-    var selectedIndex by remember { mutableStateOf(0) }
+
+    var selectedIndex by remember { mutableStateOf(when(mutableMockyCatalogSorting.value){
+        MockyCatalogSorting.Default->0
+        MockyCatalogSorting.Decrease->1
+        MockyCatalogSorting.Increase->2
+    }) }
+
     Box(modifier = Modifier) {
 
         Row(                modifier = Modifier
@@ -246,6 +259,18 @@ fun DropdownRateCatalog(
                     selectedIndex = index
                     expanded = false
 
+                    rememberCoroutineScope.launch {
+                        mutableMockyCatalogSorting.emit(
+                            when(selectedIndex){
+                                0->MockyCatalogSorting.Default
+                                1->MockyCatalogSorting.Decrease
+                                2->MockyCatalogSorting.Increase
+                                else->throw Exception()
+                            }
+                        )
+                    }
+
+
                 },
                     text =  {
                         Text(text = items[index] )
@@ -260,7 +285,7 @@ fun DropdownRateCatalog(
 @Composable
 fun DropdownRateCatalogPreview(
 ) {
-    DropdownRateCatalog()
+    DropdownRateCatalog(MutableStateFlow(MockyCatalogSorting.Default))
 }
 
 @Composable

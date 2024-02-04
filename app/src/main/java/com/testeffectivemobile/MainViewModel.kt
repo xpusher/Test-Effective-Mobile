@@ -49,8 +49,7 @@ class MainViewModel(private val application: Application):
                                     mutableMockyCatalog,
                                     mutableMockyCatalogSorting,
                                     mainRepository,
-                                    mainDialog,
-                                    mainPrefStorage
+                                    mainDialog
                                 )
                             }
 
