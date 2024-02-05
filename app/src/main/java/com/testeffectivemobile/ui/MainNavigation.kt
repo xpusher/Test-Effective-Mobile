@@ -61,8 +61,10 @@ fun MainNavigation(
                     ->{
 
                         ScreenCatalogItem(
+                            navHostController=navHostController,
                             id=it.arguments!!.getString("id")!!,
-                            mutableMockyCatalog=mutableMockyCatalog)
+                            mutableMockyCatalog=mutableMockyCatalog,
+                            mainDialog)
                     }
                     routes[routes.indexOf("ScreenMain")]
                     ->{

@@ -19,7 +19,7 @@ import com.testeffectivemobile.R
 fun ScreenBasket(navHostController: NavHostController) {
     Scaffold(
         topBar = {
-            TopAppBar(stringResource(id = R.string.screen_basket_title))
+            TopAppBar0(stringResource(id = R.string.screen_basket_title))
         },
         bottomBar = {
             BottomMenu(navHostController)

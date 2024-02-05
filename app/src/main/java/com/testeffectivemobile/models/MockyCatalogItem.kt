@@ -19,7 +19,6 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -34,6 +33,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.testeffectivemobile.R
+import com.testeffectivemobile.ui.UnderConstruction
 import com.testeffectivemobile.ui.mockyContentString
 import com.testeffectivemobile.ui.theme.TestEffectiveMobileTheme
 import org.json.JSONArray
@@ -145,7 +145,7 @@ class MockyCatalogItem(stringJSONObject: String?=null):JSONObject(
             }
     @OptIn(ExperimentalFoundationApi::class)
     @Composable
-    fun ComposableMockyCatalogItem(
+    fun ComposableMockyCatalogItemShort(
     ){
         Column(
             modifier = Modifier
@@ -320,6 +320,11 @@ class MockyCatalogItem(stringJSONObject: String?=null):JSONObject(
             //endregion
         }
     }
+    @OptIn(ExperimentalFoundationApi::class)
+    @Composable
+    fun ComposableMockyCatalogItemFull() {
+        UnderConstruction()
+    }
 
 }
 
@@ -329,6 +334,6 @@ fun ComposableMockyCatalogItemPreview(
 ) {
     TestEffectiveMobileTheme(darkTheme = false) {
         MockyCatalog(mockyContentString).item(0).
-        ComposableMockyCatalogItem()
+        ComposableMockyCatalogItemShort()
     }
 }

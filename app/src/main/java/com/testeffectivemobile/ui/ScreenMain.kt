@@ -19,7 +19,7 @@ import com.testeffectivemobile.R
 fun ScreenMain(navHostController: NavHostController) {
     Scaffold(
         topBar = {
-            TopAppBar(stringResource(id = R.string.screen_main_title))
+            TopAppBar0(stringResource(id = R.string.screen_main_title))
         },
         bottomBar = {
             BottomMenu(navHostController)

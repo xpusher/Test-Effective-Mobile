@@ -4,6 +4,7 @@ package com.testeffectivemobile.ui
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,6 +15,9 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -312,7 +316,7 @@ fun CarouselTags(mainDialog: MutableStateFlow<@Composable() (() -> Unit)?>) {
                 .wrapContentHeight()
                 .clickable {
                     selectedPosition = it
-                    mainDialog.value=
+                    mainDialog.value =
                         dialogUnderConstruction(mainDialog = mainDialog)
                 },
                 colors =
@@ -387,7 +391,7 @@ fun Divider0(){
 }
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopAppBar(stringTitle:String){
+fun TopAppBar0(stringTitle:String){
 
     CenterAlignedTopAppBar(
         title = {
@@ -395,6 +399,36 @@ fun TopAppBar(stringTitle:String){
         },
     )
 
+}
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun TopAppBar1(navHostController: NavHostController) {
+
+    CenterAlignedTopAppBar(
+        title = {
+            Row {
+                Row(modifier = Modifier
+                    .weight(1f)
+                    .clickable {
+                        navHostController.popBackStack()
+                    }
+                ) {
+                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null)
+                }
+                Row(modifier = Modifier.weight(1f),
+                    horizontalArrangement = Arrangement.End) {
+                    Icon(Icons.Filled.Share, contentDescription = null)
+                }
+            }
+        },
+    )
+
+}
+@Preview(showBackground = true)
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun TopAppBar1Preview(){
+    TopAppBar1(rememberNavController())
 }
 class MaskVisualTransformation(private val mask: String) : VisualTransformation {
 

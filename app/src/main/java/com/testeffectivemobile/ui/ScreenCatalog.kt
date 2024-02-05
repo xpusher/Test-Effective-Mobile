@@ -129,7 +129,7 @@ fun ScreenCatalog(
                             shape = RoundedCornerShape(8.dp)
                         ) {
                                 mockyContent.value!!.item(position)
-                                    .ComposableMockyCatalogItem()
+                                    .ComposableMockyCatalogItemShort()
                             }
                     }
                 }
@@ -140,7 +140,7 @@ fun ScreenCatalog(
     }
     Scaffold(
         topBar = {
-            TopAppBar(stringResource(id = R.string.screen_catalog_title))
+            TopAppBar0(stringResource(id = R.string.screen_catalog_title))
         },
         bottomBar = {
             BottomMenu(navHostController)
@@ -182,9 +182,6 @@ fun ScreenCatalogPreview(
             color = MaterialTheme.colorScheme.background
         ) {
 
-//            ScreenCatalog(
-//                MutableStateFlow(null),
-//                MutableStateFlow(MockyCatalog()))
             ScreenCatalog(
                 rememberNavController(),
                 MutableStateFlow(MockyCatalog(mockyContentString)),
