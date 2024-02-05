@@ -135,7 +135,12 @@ class MockyCatalogItem(stringJSONObject: String?=null):JSONObject(
                         put(R.drawable.img_4)
                     }
 
-                    else->put(R.drawable.baseline_no_photography_24)
+                    else-> {
+                        put(R.drawable.baseline_no_photography_24)
+//                        put(R.drawable.baseline_no_photography_24)
+//                        put(R.drawable.baseline_no_photography_24)
+//                        put(R.drawable.baseline_no_photography_24)
+                    }
                 }
             }
     @OptIn(ExperimentalFoundationApi::class)
@@ -161,36 +166,35 @@ class MockyCatalogItem(stringJSONObject: String?=null):JSONObject(
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Box(
-                     contentAlignment = Alignment.BottomCenter
-                    ) {
+                        HorizontalPager(state = PagerState {  imgHardCode.length()}) { page ->
+                            Box(
+                                contentAlignment = Alignment.BottomCenter
+                            ) {
 
-                        val state= remember {
-                            PagerState {  imgHardCode.length()}
-                        }
+                                Image(
+                                    modifier = Modifier.fillMaxSize(),
+                                    painter = painterResource(id = imgHardCode.getInt(page)),
+                                    contentScale = ContentScale.Crop,
+                                    contentDescription = null)
 
-                        HorizontalPager(state = state) { page ->
-                            Image(
-                                modifier = Modifier.fillMaxSize(),
-                                painter = painterResource(id = imgHardCode.getInt(page)),
-                                contentScale = ContentScale.Crop,
-                                contentDescription = null)
+                                TabRow(
+                                    modifier = Modifier.width((imgHardCode.length()*10).dp),
+                                    selectedTabIndex = page,
+                                    indicator = {tabPositions -> },
+                                    divider = {}
+                                ){
+                                    for (i in 0 until imgHardCode.length())
+                                        Image(painter = painterResource(id =
+                                        if (
+                                            page
+                                            ==i)
+                                            R.drawable.ic_indicator_photo_current
+                                        else
+                                            R.drawable.ic_indicator_photo),
+                                            contentDescription = null )
+                                }
+                            }
                         }
-                        TabRow(
-                            modifier = Modifier.width((imgHardCode.length()*10).dp),
-                            selectedTabIndex = state.currentPage,
-                            indicator = {tabPositions -> },
-                            divider = {}
-                        ){
-                            for (i in 0 until imgHardCode.length())
-                                    Image(painter = painterResource(id =
-                                    if (state.currentPage==i)
-                                        R.drawable.ic_indicator_photo_current
-                                    else
-                                        R.drawable.ic_indicator_photo),
-                                        contentDescription = null )
-                        }
-                    }
                 }
                 //endregion
 

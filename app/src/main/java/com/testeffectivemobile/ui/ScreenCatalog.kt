@@ -14,7 +14,6 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -23,6 +22,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -38,20 +38,23 @@ import com.testeffectivemobile.models.MockyCatalog
 import com.testeffectivemobile.models.MockyCatalogSorting
 import com.testeffectivemobile.ui.theme.TestEffectiveMobileTheme
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ScreenCatalog(
     navHostController: NavHostController,
     mutableMockyCatalog: MutableStateFlow<MockyCatalog?>,
-    mutableMockyCatalogSorting: MutableStateFlow<MockyCatalogSorting>
+    mutableMockyCatalogSorting: MutableStateFlow<MockyCatalogSorting>,
+    mainDialog: MutableStateFlow<@Composable() (() -> Unit)?>
 ) {
 
     val mockyContent=
-        mutableMockyCatalog.collectAsStateWithLifecycle().value
+        mutableMockyCatalog.collectAsStateWithLifecycle()
 
     @Composable
-    fun EmptyCatalog(){
+    fun EmptyCatalog(
+    ){
         Column(modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center) {
@@ -61,7 +64,8 @@ fun ScreenCatalog(
 
     }
     @Composable
-    fun LoadingCatalog(){
+    fun LoadingCatalog(
+    ){
         Column(modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center) {
@@ -71,14 +75,27 @@ fun ScreenCatalog(
 
     }
     @Composable
-    fun ShowCatalog(){
+    fun ShowCatalog(
+    ){
+
+        val rememberCoroutineScope=
+            rememberCoroutineScope()
 
         Column {
+            //region sort and filters
             Row(modifier = Modifier.fillMaxWidth()) {
                 Row(modifier = Modifier.weight(1f)) {
                     DropdownRateCatalog(mutableMockyCatalogSorting)
                 }
-                Row(modifier = Modifier.weight(1f),
+                Row(modifier = Modifier
+                    .weight(1f)
+                    .clickable {
+                        rememberCoroutineScope.launch {
+                            mainDialog.value=
+                                dialogUnderConstruction(mainDialog)
+
+                        }
+                    },
                     horizontalArrangement = Arrangement.End) {
                     Icon(painter = painterResource(id = R.drawable.ic_filters_catalog),
                         contentDescription = null)
@@ -90,18 +107,20 @@ fun ScreenCatalog(
 
                 }
             }
+            //endregion
             Row(modifier = Modifier.fillMaxWidth()) {
                 CarouselTags()
             }
             Row {
                 LazyVerticalGrid(columns = GridCells.Fixed(2)){
-                    items(count = mockyContent!!.items.length()) {position->
+                    items(count = mockyContent.value!!.items.length()) {position->
                         Card(modifier = Modifier
                             .padding(3.dp)
-                            .aspectRatio(168f/287f)
+                            .aspectRatio(168f / 287f)
                             .clickable {
                                 navHostController.navigate(
-                                    "ScreenCatalogItem/$position")
+                                    "ScreenCatalogItem/$position"
+                                )
                             },
                           colors = CardDefaults.cardColors(
                               containerColor = Color.Transparent
@@ -109,7 +128,7 @@ fun ScreenCatalog(
                             border = BorderStroke(1.dp, Color.LightGray),
                             shape = RoundedCornerShape(8.dp)
                         ) {
-                                mockyContent.item(position)
+                                mockyContent.value!!.item(position)
                                     .ComposableMockyCatalogItem()
                             }
                     }
@@ -117,8 +136,6 @@ fun ScreenCatalog(
 
             }
         }
-
-
 
     }
     Scaffold(
@@ -135,11 +152,11 @@ fun ScreenCatalog(
         ) {
 
             when{
-                mockyContent==null
+                mockyContent.value==null
                 -> {
                     LoadingCatalog()
                 }
-                mockyContent.isEmpty()
+                mockyContent.value!!.isEmpty()
                 ->{
                     EmptyCatalog()
                 }
@@ -150,6 +167,7 @@ fun ScreenCatalog(
             }
 
         }
+
     }
 }
 
@@ -157,7 +175,8 @@ fun ScreenCatalog(
 @Composable
 fun ScreenCatalogPreview(
 ) {
-    TestEffectiveMobileTheme(darkTheme = false) {
+    TestEffectiveMobileTheme(darkTheme = false
+    ) {
         Surface(
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background
@@ -169,7 +188,8 @@ fun ScreenCatalogPreview(
             ScreenCatalog(
                 rememberNavController(),
                 MutableStateFlow(MockyCatalog(mockyContentString)),
-                MutableStateFlow(MockyCatalogSorting.Default)
+                MutableStateFlow(MockyCatalogSorting.Default),
+                MutableStateFlow<(@Composable ()->Unit)?>(null)
             )
         }
     }

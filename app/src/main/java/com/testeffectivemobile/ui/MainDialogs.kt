@@ -16,7 +16,8 @@ import com.testeffectivemobile.R
 import com.testeffectivemobile.ui.theme.TestEffectiveMobileTheme
 import kotlinx.coroutines.flow.MutableStateFlow
 
-fun errorUpdateMocky(mainDialog: MutableStateFlow<@Composable (() -> Unit)?>):(@Composable ()->Unit) {
+fun errorUpdateMocky(mainDialog: MutableStateFlow<@Composable (() -> Unit)?>):(@Composable ()->Unit
+        ) {
     return{
     AlertDialog(
         icon = {
@@ -58,6 +59,47 @@ fun errorUpdateMocky(mainDialog: MutableStateFlow<@Composable (() -> Unit)?>):(@
 }
 }
 
+fun dialogUnderConstruction(mainDialog: MutableStateFlow<@Composable (() -> Unit)?>):(@Composable ()->Unit
+        ){
+    return {
+        AlertDialog(
+            icon = {
+                Image(
+                    modifier = Modifier
+                        .aspectRatio(3f)
+                        .padding(10.dp),
+                    painter = painterResource(R.drawable.baseline_error_outline_24),
+                    contentDescription = ""
+                )
+
+            },
+            title = {
+
+            },
+            text = {
+                UnderConstruction()
+            },
+            onDismissRequest = {
+
+            },
+            confirmButton = {
+
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = {
+                        mainDialog.value = null
+                    },
+                ) {
+                    Text(
+                        text = stringResource(id = android.R.string.cancel)
+                    )
+                }
+            }
+
+        )
+    }
+}
 @Preview(showBackground = true)
 @Composable
 fun ErrorUpdateMockyPreview() {

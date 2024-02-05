@@ -86,7 +86,7 @@ fun BottomMenu(navHostController: NavHostController
                 if (selected)
                     Color.Red
                 else
-                    Color.LightGray
+                    Color.DarkGray
 
             @Composable
             fun CreateLabel(stringTitle:String){

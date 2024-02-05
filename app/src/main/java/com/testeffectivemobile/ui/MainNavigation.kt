@@ -25,6 +25,7 @@ fun MainNavigation(
     mutableMockyCatalog: MutableStateFlow<MockyCatalog?>,
     mainPrefStorage: MainPrefStorage,
     mutableMockyCatalogSorting: MutableStateFlow<MockyCatalogSorting>,
+    mainDialog: MutableStateFlow<@Composable() (() -> Unit)?>,
     onCreateNav: () -> Unit
 ) {
 
@@ -53,7 +54,8 @@ fun MainNavigation(
                         ScreenCatalog(
                             navHostController=navHostController,
                             mutableMockyCatalog,
-                            mutableMockyCatalogSorting)
+                            mutableMockyCatalogSorting,
+                            mainDialog)
                     }
                     routes[routes.indexOf("ScreenCatalogItem/{id}")]
                     ->{
@@ -101,7 +103,8 @@ fun GreetingPreview() {
                     rememberNavController(),
                     MutableStateFlow(MockyCatalog()),
                     MainPrefStorage(LocalContext.current),
-                    MutableStateFlow(MockyCatalogSorting.Default)
+                    MutableStateFlow(MockyCatalogSorting.Default),
+                    MutableStateFlow<(@Composable ()->Unit)?>(null)
                 ){}
             }
     }
