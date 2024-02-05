@@ -109,7 +109,7 @@ fun ScreenCatalog(
             }
             //endregion
             Row(modifier = Modifier.fillMaxWidth()) {
-                CarouselTags()
+                CarouselTags(mainDialog)
             }
             Row {
                 LazyVerticalGrid(columns = GridCells.Fixed(2)){

@@ -17,6 +17,7 @@ import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenu
@@ -55,7 +56,6 @@ import com.testeffectivemobile.models.MockyCatalogSorting
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import kotlin.math.absoluteValue
-
 
 val routes = listOf(
     "OnCreateNav",
@@ -200,7 +200,6 @@ fun BottomMenu(navHostController: NavHostController
         }
     }
 }
-@OptIn(ExperimentalMaterial3Api::class)
 @Preview(showBackground = true)
 @Composable
 fun BottomMenuPreview(
@@ -289,9 +288,9 @@ fun DropdownRateCatalogPreview(
 }
 
 @Composable
-fun CarouselTags(){
+fun CarouselTags(mainDialog: MutableStateFlow<@Composable() (() -> Unit)?>) {
 
-    var tags= listOf(
+    val tags= listOf(
         "Смотреть все",
         "Лицо",
         "Тело",
@@ -299,16 +298,35 @@ fun CarouselTags(){
         "Маски",
     )
 
+    var selectedPosition by
+        remember {
+            mutableStateOf(0)
+        }
+
     LazyHorizontalGrid(
         modifier = Modifier.height(70.dp),
         rows = GridCells.Fixed(1)){
         items(tags.size){
             Card(modifier = Modifier
                 .padding(start = 5.dp)
-                .wrapContentHeight()) {
+                .wrapContentHeight()
+                .clickable {
+                    selectedPosition = it
+                    mainDialog.value=
+                        dialogUnderConstruction(mainDialog = mainDialog)
+                },
+                colors =
+                if (selectedPosition==it)
+                    CardDefaults.cardColors(
+                        containerColor = Color.Gray)
+                else
+                    CardDefaults.cardColors()
+            ) {
+
                 Text(
                     modifier = Modifier.padding(start = 15.dp, top = 10.dp, bottom = 10.dp, end = 15.dp),
-                    text = tags[it])
+                    text = tags[it],
+                    color = if (it==selectedPosition) Color.White else Color.Unspecified)
 
             }
         }
@@ -318,7 +336,7 @@ fun CarouselTags(){
 @Composable
 fun CarouselTagsPreview(
 ) {
-    CarouselTags()
+    CarouselTags(MutableStateFlow<(@Composable ()->Unit)?>(null))
 }
 
 @Composable
