@@ -1,27 +1,29 @@
 package com.testeffectivemobile.models
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Icon
+import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -32,10 +34,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.testeffectivemobile.R
-import com.testeffectivemobile.ui.ScreenCatalogItem
 import com.testeffectivemobile.ui.mockyContentString
 import com.testeffectivemobile.ui.theme.TestEffectiveMobileTheme
-import kotlinx.coroutines.flow.MutableStateFlow
 import org.json.JSONArray
 import org.json.JSONObject
 
@@ -59,12 +59,16 @@ class MockyCatalogItem(stringJSONObject: String?=null):JSONObject(
     //region price
     private val price:JSONObject
         get() = getJSONObject("price")
-    val pricePrice:String
+    val pricePricePresentation:String
         get() = price.getString("price")+" $priceUnit"
+    val pricePrice:String
+        get() = price.getString("price")
     val priceDiscount:String
         get() = price.getString("discount")
-    val pricePriceWithDiscount:String
+    val pricePriceWithDiscountPresentation:String
         get() = price.getString("priceWithDiscount")+" $priceUnit"
+    val pricePriceWithDiscount:String
+        get() = price.getString("priceWithDiscount")
     val priceUnit:String
         get() = price.getString("unit")
     //endregion
@@ -131,9 +135,10 @@ class MockyCatalogItem(stringJSONObject: String?=null):JSONObject(
                         put(R.drawable.img_4)
                     }
 
-                    else->throw Exception()
+                    else->put(R.drawable.baseline_no_photography_24)
                 }
             }
+    @OptIn(ExperimentalFoundationApi::class)
     @Composable
     fun ComposableMockyCatalogItem(
     ){
@@ -147,6 +152,7 @@ class MockyCatalogItem(stringJSONObject: String?=null):JSONObject(
 
             ) {
 
+                //region pager
                 Row(
                     modifier = Modifier
                         .weight(3f)
@@ -155,10 +161,40 @@ class MockyCatalogItem(stringJSONObject: String?=null):JSONObject(
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Image(
-                        painter = painterResource(id = imgHardCode.getInt(0)),
-                        contentDescription = null)
+                    Box(
+                     contentAlignment = Alignment.BottomCenter
+                    ) {
+
+                        val state= remember {
+                            PagerState {  imgHardCode.length()}
+                        }
+
+                        HorizontalPager(state = state) { page ->
+                            Image(
+                                modifier = Modifier.fillMaxSize(),
+                                painter = painterResource(id = imgHardCode.getInt(page)),
+                                contentScale = ContentScale.Crop,
+                                contentDescription = null)
+                        }
+                        TabRow(
+                            modifier = Modifier.width((imgHardCode.length()*10).dp),
+                            selectedTabIndex = state.currentPage,
+                            indicator = {tabPositions -> },
+                            divider = {}
+                        ){
+                            for (i in 0 until imgHardCode.length())
+                                    Image(painter = painterResource(id =
+                                    if (state.currentPage==i)
+                                        R.drawable.ic_indicator_photo_current
+                                    else
+                                        R.drawable.ic_indicator_photo),
+                                        contentDescription = null )
+                        }
+                    }
                 }
+                //endregion
+
+                //region favorite
                 Column(
                     modifier = Modifier.weight(1f),
                 ) {
@@ -181,6 +217,7 @@ class MockyCatalogItem(stringJSONObject: String?=null):JSONObject(
 
                     }
                 }
+                //endregion
 
             }
             //endregion
@@ -196,11 +233,12 @@ class MockyCatalogItem(stringJSONObject: String?=null):JSONObject(
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
+                        .padding(start = 4.dp)
                 ) {
                     //region price
                     Row {
                         Text(
-                            text = pricePrice,
+                            text = pricePricePresentation,
                             style = TextStyle(textDecoration = TextDecoration.LineThrough),
                             fontSize = 9.sp
                         )
@@ -209,7 +247,7 @@ class MockyCatalogItem(stringJSONObject: String?=null):JSONObject(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = pricePriceWithDiscount,
+                            text = pricePriceWithDiscountPresentation,
                             style = TextStyle(fontStyle = FontStyle.Normal),
                             fontSize = 14.sp,
                             fontWeight = FontWeight.Bold,

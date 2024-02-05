@@ -66,7 +66,8 @@ dependencies {
     implementation("io.ktor:ktor-client-core:2.3.8")
     implementation("io.ktor:ktor-client-android:2.3.8")
     implementation("androidx.navigation:navigation-compose:2.7.6")
-
+    implementation("com.google.accompanist:accompanist-pager:0.34.0")
+    implementation("com.google.accompanist:accompanist-pager-indicators:0.34.0")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")

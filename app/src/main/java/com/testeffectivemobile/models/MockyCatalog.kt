@@ -1,9 +1,7 @@
 package com.testeffectivemobile.models
 
-import com.testeffectivemobile.MainPrefStorage
 import org.json.JSONArray
 import org.json.JSONObject
-import java.util.Collections
 import kotlin.reflect.full.isSubclassOf
 
 class MockyCatalog(jsonString: String?=null):
@@ -39,15 +37,15 @@ class MockyCatalog(jsonString: String?=null):
 
             when (mockyCatalogSorting) {
                 MockyCatalogSorting.Default -> {
-                    p0!!.feedbackRating.compareTo(p1!!.feedbackRating)
+                    p1!!.feedbackRating.compareTo(p0!!.feedbackRating)
                 }
 
                 MockyCatalogSorting.Decrease -> {
-                    p0!!.pricePriceWithDiscount.toDouble().compareTo(p1!!.pricePriceWithDiscount.toDouble())
+                    p1!!.pricePriceWithDiscount.toDouble().compareTo(p0!!.pricePriceWithDiscount.toDouble())
                 }
 
                 MockyCatalogSorting.Increase -> {
-                    p1!!.pricePriceWithDiscount.toDouble().compareTo(p0!!.pricePriceWithDiscount.toDouble())
+                    p0!!.pricePriceWithDiscount.toDouble().compareTo(p1!!.pricePriceWithDiscount.toDouble())
                 }
             }
         }
